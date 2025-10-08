@@ -135,6 +135,5 @@ MVP in active development. Success metrics include:
 
 ### 8. License
 
-TBD. If you plan to open-source this project, add a LICENSE file (e.g., MIT). If proprietary, state the applicable terms here.
-
+MIT.
 
