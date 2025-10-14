@@ -1,6 +1,6 @@
 import { z } from "zod";
 import type { APIRoute } from "astro";
-import type { GenerateFlashcardsCommand, GenerationCreateResponseDto } from "../../types";
+import type { GenerateFlashcardsCommand } from "../../types";
 import { GenerationService } from "../../lib/generation.service";
 
 export const prerender = false;
