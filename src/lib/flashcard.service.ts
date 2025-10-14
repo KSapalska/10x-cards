@@ -41,6 +41,7 @@ export class FlashcardService {
       return createdFlashcards as FlashcardDto[];
     } catch (error) {
       // Log error for debugging
+      // eslint-disable-next-line no-console
       console.error("Error in createFlashcards:", error);
 
       // Re-throw with more context

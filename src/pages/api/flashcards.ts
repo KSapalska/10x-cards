@@ -1,7 +1,7 @@
 import { z } from "zod";
 import type { APIRoute } from "astro";
 import type { FlashcardsCreateCommand, FlashcardDto } from "../../types";
-import { FlashcardService } from "../../lib/flashcard.service";
+import { FlashcardService } from "../../lib/flashcard.service.js";
 
 export const prerender = false;
 
