@@ -1,0 +1,14 @@
+---
+import Layout from "../layouts/Layout.astro";
+import FlashcardGenerationView from "../components/FlashcardGenerationView";
+import { ThemeToggle } from "../components/ThemeToggle";
+---
+
+<Layout title="Generuj fiszki - 10xCards">
+  <main class="min-h-screen bg-background">
+    <div class="fixed top-4 right-4 z-50">
+      <ThemeToggle client:load />
+    </div>
+    <FlashcardGenerationView client:load />
+  </main>
+</Layout>
