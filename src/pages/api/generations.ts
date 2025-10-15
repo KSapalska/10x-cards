@@ -31,13 +31,13 @@ export const POST: APIRoute = async ({ request, locals }) => {
       );
     }
 
-    //Temporarty mock response
-    /*const mockResponse: GenerationCreateResponseDto = {
-      generation_id: 0,
-      flashcards_proposals: [],
-      generated_count: 0,
-    };*/
-    const generationService = new GenerationService(locals.supabase);
+    // Pobierz API key z environment
+    const openRouterApiKey = import.meta.env.OPENROUTER_API_KEY;
+    if (!openRouterApiKey) {
+      throw new Error("OPENROUTER_API_KEY is not configured");
+    }
+
+    const generationService = new GenerationService(locals.supabase, openRouterApiKey);
     const result = await generationService.generateFlashcards(validationResult.data.source_text);
 
     return new Response(JSON.stringify(result), {

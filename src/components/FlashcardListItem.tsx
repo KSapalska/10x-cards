@@ -72,16 +72,16 @@ export function FlashcardListItem({ flashcard, onAccept, onEdit, onReject }: Fla
   return (
     <Card
       className={cn(
-        "transition-all",
+        "transition-all h-full flex flex-col",
         flashcard.accepted && "border-green-500 bg-green-50 dark:bg-green-950/20",
         flashcard.edited && "border-blue-500 bg-blue-50 dark:bg-blue-950/20"
       )}
     >
-      <CardContent className="space-y-4">
+      <CardContent className="flex flex-col h-full p-4">
         {isEditing ? (
           <>
             {/* Edit Mode */}
-            <div className="space-y-4">
+            <div className="space-y-4 flex-1 flex flex-col">
               <div className="space-y-2">
                 <label htmlFor={frontId} className="block text-sm font-medium text-foreground">
                   Przód fiszki
@@ -148,15 +148,15 @@ export function FlashcardListItem({ flashcard, onAccept, onEdit, onReject }: Fla
         ) : (
           <>
             {/* View Mode */}
-            <div className="space-y-3">
+            <div className="space-y-3 flex-1 flex flex-col">
               <div className="space-y-1">
                 <p className="text-xs font-medium text-muted-foreground uppercase">Pytanie</p>
-                <p className="text-base font-medium">{flashcard.front}</p>
+                <p className="text-base font-medium line-clamp-3">{flashcard.front}</p>
               </div>
 
-              <div className="space-y-1">
+              <div className="space-y-1 flex-1">
                 <p className="text-xs font-medium text-muted-foreground uppercase">Odpowiedź</p>
-                <p className="text-sm text-muted-foreground">{flashcard.back}</p>
+                <p className="text-sm text-muted-foreground line-clamp-4">{flashcard.back}</p>
               </div>
 
               {flashcard.edited && (
@@ -194,7 +194,7 @@ export function FlashcardListItem({ flashcard, onAccept, onEdit, onReject }: Fla
               )}
             </div>
 
-            <div className="flex gap-2 pt-2">
+            <div className="flex gap-2 flex-wrap mt-auto pt-4">
               <Button
                 onClick={handleAccept}
                 variant={flashcard.accepted ? "default" : "outline"}

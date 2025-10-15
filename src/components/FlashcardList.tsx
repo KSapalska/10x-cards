@@ -14,9 +14,9 @@ export function FlashcardList({ flashcards, onAccept, onEdit, onReject }: Flashc
   }
 
   return (
-    <div className="space-y-4" role="list" aria-label="Lista propozycji fiszek">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 auto-rows-fr" role="list" aria-label="Lista propozycji fiszek">
       {flashcards.map((flashcard) => (
-        <div key={flashcard.id} role="listitem">
+        <div key={flashcard.id} role="listitem" className="h-full">
           <FlashcardListItem flashcard={flashcard} onAccept={onAccept} onEdit={onEdit} onReject={onReject} />
         </div>
       ))}
