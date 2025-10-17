@@ -1,7 +1,7 @@
 import { z } from "zod";
 import type { APIRoute } from "astro";
-import type { FlashcardsCreateCommand, FlashcardDto } from "../../types";
-import { FlashcardService } from "../../lib/flashcard.service.js";
+import type { FlashcardsCreateCommand } from "../../types";
+import { FlashcardService } from "../../lib/flashcard.service";
 
 export const prerender = false;
 
@@ -56,7 +56,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     }
 
     // Additional validation for generation_id based on source
-    const invalidFlashcards = validationResult.data.flashcards.filter((flashcard, index) => {
+    const invalidFlashcards = validationResult.data.flashcards.filter((flashcard) => {
       if (!validateGenerationIdBySource(flashcard)) {
         return true;
       }
