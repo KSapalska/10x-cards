@@ -35,6 +35,19 @@ const validateGenerationIdBySource = (data: z.infer<typeof flashcardCreateSchema
 };
 
 export const POST: APIRoute = async ({ request, locals }) => {
+  // Check authentication - user must be logged in
+  if (!locals.user) {
+    return new Response(
+      JSON.stringify({
+        error: "Unauthorized - please log in",
+      }),
+      {
+        status: 401,
+        headers: { "Content-Type": "application/json" },
+      }
+    );
+  }
+
   try {
     // Parse request body
     const body = (await request.json()) as FlashcardsCreateCommand;
@@ -79,8 +92,8 @@ export const POST: APIRoute = async ({ request, locals }) => {
     // Initialize flashcard service
     const flashcardService = new FlashcardService(locals.supabase);
 
-    // Create flashcards
-    const createdFlashcards = await flashcardService.createFlashcards(validationResult.data.flashcards);
+    // Create flashcards with user_id from authenticated session
+    const createdFlashcards = await flashcardService.createFlashcards(validationResult.data.flashcards, locals.user.id);
 
     return new Response(
       JSON.stringify({

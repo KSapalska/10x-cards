@@ -45,6 +45,11 @@ export function useGenerateFlashcards(): UseGenerateFlashcardsReturn {
 
       const data: GenerationCreateResponseDto = await response.json();
 
+      // Validate response data
+      if (!data.flashcards_proposals || !Array.isArray(data.flashcards_proposals)) {
+        throw new Error("Nieprawidłowa odpowiedź serwera");
+      }
+
       // Convert proposals to view models with UI state
       const viewModels: FlashcardProposalViewModel[] = data.flashcards_proposals.map((proposal, index) => ({
         ...proposal,

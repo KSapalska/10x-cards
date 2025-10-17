@@ -15,6 +15,19 @@ const generateFlashcardsSchema = z.object({
 
 export const POST: APIRoute = async ({ request, locals }) => {
   try {
+    // Check authentication - user must be logged in
+    if (!locals.user) {
+      return new Response(
+        JSON.stringify({
+          error: "Unauthorized - please log in",
+        }),
+        {
+          status: 401,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+    }
+
     const body = (await request.json()) as GenerateFlashcardsCommand;
     const validationResult = generateFlashcardsSchema.safeParse(body);
 
@@ -37,8 +50,12 @@ export const POST: APIRoute = async ({ request, locals }) => {
       throw new Error("OPENROUTER_API_KEY is not configured");
     }
 
+    // Pass user_id from authenticated session
     const generationService = new GenerationService(locals.supabase, openRouterApiKey);
-    const result = await generationService.generateFlashcards(validationResult.data.source_text);
+    const result = await generationService.generateFlashcards(
+      validationResult.data.source_text,
+      locals.user.id
+    );
 
     return new Response(JSON.stringify(result), {
       status: 201,

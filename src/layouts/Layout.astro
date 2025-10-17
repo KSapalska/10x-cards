@@ -1,11 +1,19 @@
 ---
 import "../styles/global.css";
+import { AuthHeader } from "../components/AuthHeader";
 
 interface Props {
   title?: string;
+  showHeader?: boolean;
 }
 
-const { title = "10x Astro Starter" } = Astro.props;
+const { title = "10x Astro Starter", showHeader = false } = Astro.props;
+
+// Get user from locals (set by middleware)
+const user = Astro.locals.user ? {
+  id: Astro.locals.user.id,
+  email: Astro.locals.user.email || ""
+} : null;
 ---
 
 <!doctype html>
@@ -32,6 +40,7 @@ const { title = "10x Astro Starter" } = Astro.props;
     </script>
   </head>
   <body>
+    {showHeader && <AuthHeader user={user} client:load />}
     <slot />
   </body>
 </html>

@@ -1,6 +1,13 @@
 ---
 import Layout from "../../layouts/Layout.astro";
 import { LoginForm } from "../../components/LoginForm";
+
+// If user is already logged in, redirect to generate page
+// This is handled by middleware, but we add it here as a safety net
+if (Astro.locals.session) {
+  const returnTo = Astro.url.searchParams.get("returnTo");
+  return Astro.redirect(returnTo || "/generate");
+}
 ---
 
 <Layout title="Zaloguj się - 10x Cards">

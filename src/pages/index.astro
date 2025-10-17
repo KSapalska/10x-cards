@@ -1,8 +1,16 @@
 ---
-import Welcome from "../components/Welcome.astro";
 import Layout from "../layouts/Layout.astro";
+
+// Redirect logic for home page:
+// - Logged in users → /generate (main app)
+// - Anonymous users → /auth/login (need to authenticate)
+if (Astro.locals.session) {
+  return Astro.redirect("/generate");
+} else {
+  return Astro.redirect("/auth/login");
+}
 ---
 
-<Layout>
-  <Welcome />
+<Layout title="10x Cards">
+  <!-- This will never render due to redirects above -->
 </Layout>
