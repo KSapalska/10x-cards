@@ -1,0 +1,11 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { RegisterForm } from "../../components/RegisterForm";
+---
+
+<Layout title="Rejestracja - 10x Cards">
+  <div class="min-h-screen flex items-center justify-center bg-background px-4 py-12">
+    <RegisterForm client:load />
+  </div>
+</Layout>
+
