@@ -9,9 +9,6 @@ const supabaseAnonKey = import.meta.env.SUPABASE_KEY;
 // Protected routes that require authentication
 const PROTECTED_ROUTES = ["/generate"];
 
-// Public routes (anyone can access)
-const PUBLIC_ROUTES = ["/", "/auth/login", "/auth/register", "/auth/forgot-password", "/auth/reset-password"];
-
 // Auth routes (should redirect logged-in users)
 const AUTH_ROUTES = ["/auth/login", "/auth/register"];
 
@@ -24,9 +21,13 @@ const AUTH_ROUTES = ["/auth/login", "/auth/register"];
  * - Auth route handling (redirects authenticated users from login/register pages)
  */
 export const onRequest = defineMiddleware(async (context, next) => {
-  // Get access and refresh tokens from cookies
-  const accessToken = context.cookies.get("sb-access-token")?.value;
-  const refreshToken = context.cookies.get("sb-refresh-token")?.value;
+  // Check for tokens in URL params (from password reset email link)
+  const urlAccessToken = context.url.searchParams.get("access_token");
+  const urlRefreshToken = context.url.searchParams.get("refresh_token");
+
+  // Get access and refresh tokens from cookies or URL
+  let accessToken = context.cookies.get("sb-access-token")?.value || urlAccessToken;
+  let refreshToken = context.cookies.get("sb-refresh-token")?.value || urlRefreshToken;
 
   // Create a Supabase client for this request
   // If we have tokens, set them in the client
@@ -43,8 +44,37 @@ export const onRequest = defineMiddleware(async (context, next) => {
     },
   });
 
-  // If we have tokens, set the session
-  if (accessToken && refreshToken) {
+  // If we have tokens from URL, set the session and store in cookies
+  if (urlAccessToken && urlRefreshToken) {
+    await supabase.auth.setSession({
+      access_token: urlAccessToken,
+      refresh_token: urlRefreshToken,
+    });
+
+    // Store tokens in cookies for future requests
+    const cookieOptions = {
+      path: "/",
+      httpOnly: true,
+      secure: import.meta.env.PROD,
+      sameSite: "strict" as const,
+      maxAge: 60 * 60, // 1 hour - enough time for password reset
+    };
+
+    context.cookies.set("sb-access-token", urlAccessToken, cookieOptions);
+    context.cookies.set("sb-refresh-token", urlRefreshToken, cookieOptions);
+
+    // Redirect to clean URL (remove tokens from URL for security)
+    const cleanUrl = new URL(context.url);
+    cleanUrl.searchParams.delete("access_token");
+    cleanUrl.searchParams.delete("refresh_token");
+    cleanUrl.searchParams.delete("type"); // Supabase also adds 'type' param
+
+    // Only redirect if URL actually changed
+    if (context.url.href !== cleanUrl.href) {
+      return context.redirect(cleanUrl.pathname + cleanUrl.search);
+    }
+  } else if (accessToken && refreshToken) {
+    // If we have tokens from cookies, set the session
     await supabase.auth.setSession({
       access_token: accessToken,
       refresh_token: refreshToken,
@@ -62,7 +92,6 @@ export const onRequest = defineMiddleware(async (context, next) => {
 
   // Smart refresh: Check if session is about to expire (within 5 minutes)
   if (session && authService.shouldRefreshSession(session, 300)) {
-    console.log("Session expiring soon, refreshing...");
     const refreshResult = await authService.refreshSession();
 
     if (refreshResult.success && refreshResult.session) {
@@ -83,7 +112,6 @@ export const onRequest = defineMiddleware(async (context, next) => {
       context.locals.user = refreshResult.user ?? null;
     } else {
       // Refresh failed, clear session
-      console.error("Session refresh failed:", refreshResult.error);
       context.cookies.delete("sb-access-token", { path: "/" });
       context.cookies.delete("sb-refresh-token", { path: "/" });
       context.locals.session = null;

@@ -15,12 +15,44 @@ interface PasswordStrength {
   color: string;
 }
 
+// Validation functions (pure, outside component for stability)
+const validateEmail = (value: string): string | undefined => {
+  if (!value.trim()) {
+    return "Adres email jest wymagany";
+  }
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(value)) {
+    return "Nieprawidłowy format adresu email";
+  }
+  return undefined;
+};
+
+const validatePassword = (value: string): string | undefined => {
+  if (!value) {
+    return "Hasło jest wymagane";
+  }
+  if (value.length < 8) {
+    return "Hasło musi zawierać co najmniej 8 znaków";
+  }
+  if (!/[A-Z]/.test(value)) {
+    return "Hasło musi zawierać co najmniej jedną wielką literę";
+  }
+  if (!/[0-9]/.test(value)) {
+    return "Hasło musi zawierać co najmniej jedną cyfrę";
+  }
+  if (!/[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(value)) {
+    return "Hasło musi zawierać co najmniej jeden znak specjalny";
+  }
+  return undefined;
+};
+
 export function RegisterForm({ onSubmit }: RegisterFormProps) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<{
     email?: string;
     password?: string;
@@ -31,45 +63,19 @@ export function RegisterForm({ onSubmit }: RegisterFormProps) {
   const passwordId = useId();
   const confirmPasswordId = useId();
 
-  const validateEmail = (value: string): string | undefined => {
-    if (!value.trim()) {
-      return "Adres email jest wymagany";
-    }
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(value)) {
-      return "Nieprawidłowy format adresu email";
-    }
-    return undefined;
-  };
-
-  const validatePassword = (value: string): string | undefined => {
-    if (!value) {
-      return "Hasło jest wymagane";
-    }
-    if (value.length < 8) {
-      return "Hasło musi zawierać co najmniej 8 znaków";
-    }
-    if (!/[A-Z]/.test(value)) {
-      return "Hasło musi zawierać co najmniej jedną wielką literę";
-    }
-    if (!/[0-9]/.test(value)) {
-      return "Hasło musi zawierać co najmniej jedną cyfrę";
-    }
-    if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(value)) {
-      return "Hasło musi zawierać co najmniej jeden znak specjalny";
-    }
-    return undefined;
-  };
-
-  const validateConfirmPassword = (value: string): string | undefined => {
-    if (!value) {
-      return "Potwierdzenie hasła jest wymagane";
-    }
-    if (value !== password) {
-      return "Hasła nie są identyczne";
-    }
-    return undefined;
-  };
+  // Validation function that depends on password state
+  const validateConfirmPassword = useCallback(
+    (value: string): string | undefined => {
+      if (!value) {
+        return "Potwierdzenie hasła jest wymagane";
+      }
+      if (value !== password) {
+        return "Hasła nie są identyczne";
+      }
+      return undefined;
+    },
+    [password]
+  );
 
   const passwordStrength = useMemo((): PasswordStrength => {
     if (!password) {
@@ -81,7 +87,7 @@ export function RegisterForm({ onSubmit }: RegisterFormProps) {
     if (password.length >= 12) score++;
     if (/[a-z]/.test(password) && /[A-Z]/.test(password)) score++;
     if (/[0-9]/.test(password)) score++;
-    if (/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) score++;
+    if (/[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(password)) score++;
 
     if (score <= 2) {
       return { score, label: "Słabe", color: "bg-destructive" };
@@ -105,7 +111,7 @@ export function RegisterForm({ onSubmit }: RegisterFormProps) {
   const handleConfirmPasswordBlur = useCallback(() => {
     const confirmPasswordError = validateConfirmPassword(confirmPassword);
     setFieldErrors((prev) => ({ ...prev, confirmPassword: confirmPasswordError }));
-  }, [confirmPassword, password]);
+  }, [confirmPassword, validateConfirmPassword]);
 
   const handleSubmit = useCallback(
     async (e: FormEvent<HTMLFormElement>) => {
@@ -146,13 +152,27 @@ export function RegisterForm({ onSubmit }: RegisterFormProps) {
             }),
           });
 
+          const data = await response.json();
+
           if (!response.ok) {
-            const data = await response.json();
             throw new Error(data.error || "Błąd podczas rejestracji");
           }
 
-          // Redirect po sukcesie (użytkownik jest automatycznie zalogowany)
-          window.location.href = "/generate";
+          // Check if email verification is required
+          if (data.requiresEmailVerification) {
+            // Show success message with email verification instructions
+            setSuccessMessage(
+              data.message ||
+                "Konto zostało utworzone. Sprawdź swoją skrzynkę email i potwierdź adres, aby się zalogować."
+            );
+            // Clear form
+            setEmail("");
+            setPassword("");
+            setConfirmPassword("");
+          } else {
+            // User is automatically logged in, redirect to generate page
+            window.location.href = "/generate";
+          }
         }
       } catch (err) {
         setError(err instanceof Error ? err.message : "Błąd serwera – spróbuj ponownie");
@@ -160,7 +180,7 @@ export function RegisterForm({ onSubmit }: RegisterFormProps) {
         setIsLoading(false);
       }
     },
-    [email, password, confirmPassword, onSubmit]
+    [email, password, confirmPassword, onSubmit, validateConfirmPassword]
   );
 
   return (
@@ -173,6 +193,39 @@ export function RegisterForm({ onSubmit }: RegisterFormProps) {
       <form onSubmit={handleSubmit} noValidate>
         <CardContent className="space-y-4">
           {error && <ErrorNotification message={error} onDismiss={() => setError(null)} />}
+
+          {successMessage && (
+            <div className="rounded-lg border border-chart-2 bg-chart-2/10 p-4 text-sm text-chart-2" role="alert">
+              <div className="flex items-start gap-3">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="size-5 shrink-0 mt-0.5"
+                  aria-hidden="true"
+                >
+                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                  <polyline points="22 4 12 14.01 9 11.01" />
+                </svg>
+                <div className="flex-1">
+                  <p className="font-medium mb-1">Rejestracja udana!</p>
+                  <p>{successMessage}</p>
+                  <p className="mt-2">
+                    <a
+                      href="/auth/login"
+                      className="font-medium underline underline-offset-4 hover:no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded"
+                    >
+                      Przejdź do logowania
+                    </a>
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
 
           <div className="space-y-2">
             <Label htmlFor={emailId}>Email</Label>
@@ -278,4 +331,3 @@ export function RegisterForm({ onSubmit }: RegisterFormProps) {
     </Card>
   );
 }
-

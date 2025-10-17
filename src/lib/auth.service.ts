@@ -27,6 +27,67 @@ export class AuthService {
   constructor(private supabase: SupabaseClient) {}
 
   /**
+   * Register a new user with email and password
+   * Note: Supabase sends a confirmation email by default
+   * @param email - User email (normalized to lowercase)
+   * @param password - User password (must meet strength requirements)
+   * @returns AuthResult with session data or error
+   */
+  async register(email: string, password: string): Promise<AuthResult> {
+    try {
+      const { data, error } = await this.supabase.auth.signUp({
+        email: email.toLowerCase().trim(),
+        password,
+      });
+
+      if (error) {
+        // Log detailed error for debugging
+        console.error("Supabase registration error:", {
+          message: error.message,
+          status: error.status,
+          code: error.code,
+          name: error.name,
+        });
+
+        // Handle specific error cases
+        if (error.message.includes("already registered")) {
+          return {
+            success: false,
+            error: "Konto z tym adresem email już istnieje",
+          };
+        }
+
+        // Return generic error message for security
+        return {
+          success: false,
+          error: "Błąd podczas rejestracji",
+        };
+      }
+
+      if (!data.user) {
+        return {
+          success: false,
+          error: "Błąd podczas rejestracji",
+        };
+      }
+
+      // Note: data.session may be null if email confirmation is required
+      // In that case, user needs to confirm email before logging in
+      return {
+        success: true,
+        session: data.session ?? undefined,
+        user: data.user,
+      };
+    } catch (err) {
+      console.error("Registration error:", err);
+      return {
+        success: false,
+        error: "Błąd serwera – spróbuj ponownie",
+      };
+    }
+  }
+
+  /**
    * Authenticate user with email and password
    * @param email - User email (normalized to lowercase)
    * @param password - User password
@@ -192,6 +253,85 @@ export class AuthService {
     const timeUntilExpiry = expiresAt - now;
 
     return timeUntilExpiry < thresholdSeconds;
+  }
+
+  /**
+   * Request password reset email
+   * Sends an email with a reset link to the user
+   * @param email - User email
+   * @returns AuthResult indicating success or failure
+   */
+  async forgotPassword(email: string): Promise<AuthResult> {
+    try {
+      const { error } = await this.supabase.auth.resetPasswordForEmail(
+        email.toLowerCase().trim(),
+        {
+          redirectTo: `${import.meta.env.PUBLIC_SITE_URL || "http://localhost:4321"}/auth/reset-password`,
+        }
+      );
+
+      if (error) {
+        console.error("Forgot password error:", error);
+        // For security, always return success even if email doesn't exist
+        // This prevents email enumeration attacks
+      }
+
+      // Always return success for security
+      return {
+        success: true,
+      };
+    } catch (err) {
+      console.error("Forgot password error:", err);
+      // Still return success for security
+      return {
+        success: true,
+      };
+    }
+  }
+
+  /**
+   * Reset password using the current authenticated session
+   * Note: Supabase automatically sets the session when user clicks reset link from email
+   * The token from URL is handled by Supabase client automatically
+   * @param newPassword - New password
+   * @returns AuthResult indicating success or failure
+   */
+  async resetPassword(newPassword: string): Promise<AuthResult> {
+    try {
+      // Check if user has an active session (from password reset email link)
+      const { data: { session }, error: sessionError } = await this.supabase.auth.getSession();
+
+      if (sessionError || !session) {
+        console.error("Session error:", sessionError);
+        return {
+          success: false,
+          error: "Token resetowania jest nieprawidłowy lub wygasł",
+        };
+      }
+
+      // Update the password
+      const { error: updateError } = await this.supabase.auth.updateUser({
+        password: newPassword,
+      });
+
+      if (updateError) {
+        console.error("Password update error:", updateError);
+        return {
+          success: false,
+          error: "Błąd podczas zmiany hasła",
+        };
+      }
+
+      return {
+        success: true,
+      };
+    } catch (err) {
+      console.error("Reset password error:", err);
+      return {
+        success: false,
+        error: "Błąd serwera – spróbuj ponownie",
+      };
+    }
   }
 }
 

@@ -38,7 +38,6 @@ export function ForgotPasswordForm({ onSubmit }: ForgotPasswordFormProps) {
     async (e: FormEvent<HTMLFormElement>) => {
       e.preventDefault();
       setError(null);
-      setSuccess(false);
 
       // Walidacja
       const emailError = validateEmail(email);
@@ -86,33 +85,37 @@ export function ForgotPasswordForm({ onSubmit }: ForgotPasswordFormProps) {
     return (
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle>Sprawdź swoją skrzynkę pocztową</CardTitle>
-          <CardDescription>
-            Link do resetowania hasła został wysłany na adres{" "}
-            <span className="font-medium text-foreground">{email}</span>
-          </CardDescription>
+          <CardTitle>Sprawdź swoją skrzynkę email</CardTitle>
+          <CardDescription>Wysłaliśmy link do resetowania hasła</CardDescription>
         </CardHeader>
 
-        <CardContent className="space-y-4">
-          <div className="rounded-lg bg-muted/50 p-4 text-sm text-muted-foreground">
-            <p>
-              Link będzie ważny przez <strong>1 godzinę</strong>. Jeśli nie otrzymasz wiadomości w ciągu kilku
-              minut, sprawdź folder spam.
+        <CardContent>
+          <div className="rounded-lg bg-chart-2/10 p-4 space-y-2">
+            <p className="text-sm text-chart-2">
+              Jeśli konto z adresem <strong>{email}</strong> istnieje w naszej bazie, otrzymasz wiadomość email z linkiem do resetowania hasła.
+            </p>
+            <p className="text-sm text-muted-foreground">
+              Link jest ważny przez 1 godzinę. Jeśli nie widzisz wiadomości, sprawdź folder spam.
             </p>
           </div>
         </CardContent>
 
         <CardFooter className="flex flex-col gap-4">
-          <Button type="button" variant="outline" className="w-full" onClick={() => setSuccess(false)}>
-            Wyślij ponownie
-          </Button>
-
-          <a
-            href="/auth/login"
-            className="text-center text-sm text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded"
+          <Button
+            type="button"
+            className="w-full"
+            onClick={() => (window.location.href = "/auth/login")}
           >
             Powrót do logowania
-          </a>
+          </Button>
+
+          <button
+            type="button"
+            onClick={() => setSuccess(false)}
+            className="text-center text-sm text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded"
+          >
+            Wyślij link ponownie
+          </button>
         </CardFooter>
       </Card>
     );
@@ -122,7 +125,7 @@ export function ForgotPasswordForm({ onSubmit }: ForgotPasswordFormProps) {
     <Card className="w-full max-w-md">
       <CardHeader>
         <CardTitle>Zapomniałeś hasła?</CardTitle>
-        <CardDescription>Podaj swój adres email, a wyślemy Ci link do zresetowania hasła</CardDescription>
+        <CardDescription>Wprowadź swój adres email, a wyślemy Ci link do resetowania hasła</CardDescription>
       </CardHeader>
 
       <form onSubmit={handleSubmit} noValidate>
@@ -169,4 +172,3 @@ export function ForgotPasswordForm({ onSubmit }: ForgotPasswordFormProps) {
     </Card>
   );
 }
-

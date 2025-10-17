@@ -30,13 +30,28 @@ export const emailSchema = z
   .toLowerCase();
 
 /**
- * Password validation schema
+ * Password validation schema for login
  * Minimum 6 characters (Supabase default)
  */
 export const passwordSchema = z
   .string()
   .min(1, "Hasło jest wymagane")
   .min(6, "Hasło musi zawierać co najmniej 6 znaków");
+
+/**
+ * Strong password validation schema for registration
+ * Minimum 8 characters, at least 1 uppercase, 1 number, 1 special character
+ */
+export const strongPasswordSchema = z
+  .string()
+  .min(1, "Hasło jest wymagane")
+  .min(8, "Hasło musi zawierać co najmniej 8 znaków")
+  .regex(/[A-Z]/, "Hasło musi zawierać co najmniej jedną wielką literę")
+  .regex(/[0-9]/, "Hasło musi zawierać co najmniej jedną cyfrę")
+  .regex(
+    /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/,
+    "Hasło musi zawierać co najmniej jeden znak specjalny"
+  );
 
 /**
  * Login request validation schema
@@ -50,8 +65,49 @@ export const loginSchema = z.object({
 export type LoginCommand = z.infer<typeof loginSchema>;
 
 /**
+ * Register request validation schema
+ */
+export const registerSchema = z
+  .object({
+    email: emailSchema,
+    password: strongPasswordSchema,
+    confirmPassword: z.string().min(1, "Potwierdzenie hasła jest wymagane"),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Hasła nie są identyczne",
+    path: ["confirmPassword"],
+  });
+
+export type RegisterCommand = z.infer<typeof registerSchema>;
+
+/**
  * Logout request validation schema (no body required, but can validate headers)
  */
 export const logoutSchema = z.object({}).optional();
 
 export type LogoutCommand = z.infer<typeof logoutSchema>;
+
+/**
+ * Forgot password request validation schema
+ */
+export const forgotPasswordSchema = z.object({
+  email: emailSchema,
+});
+
+export type ForgotPasswordCommand = z.infer<typeof forgotPasswordSchema>;
+
+/**
+ * Reset password request validation schema
+ * Note: Token is handled by Supabase automatically via URL params
+ */
+export const resetPasswordSchema = z
+  .object({
+    password: strongPasswordSchema,
+    confirmPassword: z.string().min(1, "Potwierdzenie hasła jest wymagane"),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Hasła nie są identyczne",
+    path: ["confirmPassword"],
+  });
+
+export type ResetPasswordCommand = z.infer<typeof resetPasswordSchema>;

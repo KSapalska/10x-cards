@@ -1,4 +1,4 @@
-import { useState, useCallback, useId, useMemo, useEffect, type FormEvent } from "react";
+import { useState, useCallback, useId, useMemo, type FormEvent } from "react";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
@@ -6,8 +6,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { ErrorNotification } from "./ErrorNotification";
 
 interface ResetPasswordFormProps {
-  token?: string;
-  onSubmit?: (token: string, password: string, confirmPassword: string) => Promise<void>;
+  onSubmit?: (password: string, confirmPassword: string) => Promise<void>;
 }
 
 interface PasswordStrength {
@@ -16,8 +15,7 @@ interface PasswordStrength {
   color: string;
 }
 
-export function ResetPasswordForm({ token: providedToken, onSubmit }: ResetPasswordFormProps) {
-  const [token, setToken] = useState(providedToken || "");
+export function ResetPasswordForm({ onSubmit }: ResetPasswordFormProps) {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -32,19 +30,8 @@ export function ResetPasswordForm({ token: providedToken, onSubmit }: ResetPassw
   const passwordId = useId();
   const confirmPasswordId = useId();
 
-  useEffect(() => {
-    // Pobierz token z URL jeśli nie został przekazany przez props
-    if (!providedToken) {
-      const params = new URLSearchParams(window.location.search);
-      const urlToken = params.get("token");
-
-      if (!urlToken) {
-        setTokenError(true);
-      } else {
-        setToken(urlToken);
-      }
-    }
-  }, [providedToken]);
+  // Note: Supabase automatically sets session from URL params (access_token, refresh_token)
+  // when user clicks the reset link from email. The session is handled by middleware.
 
   const validatePassword = (value: string): string | undefined => {
     if (!value) {
@@ -111,11 +98,6 @@ export function ResetPasswordForm({ token: providedToken, onSubmit }: ResetPassw
       e.preventDefault();
       setError(null);
 
-      if (!token) {
-        setError("Brak tokenu resetowania hasła");
-        return;
-      }
-
       // Walidacja
       const passwordError = validatePassword(password);
       const confirmPasswordError = validateConfirmPassword(confirmPassword);
@@ -133,7 +115,7 @@ export function ResetPasswordForm({ token: providedToken, onSubmit }: ResetPassw
 
       try {
         if (onSubmit) {
-          await onSubmit(token, password, confirmPassword);
+          await onSubmit(password, confirmPassword);
         } else {
           // Fallback - native form submission do /api/auth/reset-password
           const response = await fetch("/api/auth/reset-password", {
@@ -142,10 +124,10 @@ export function ResetPasswordForm({ token: providedToken, onSubmit }: ResetPassw
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
-              token,
               password,
               confirmPassword,
             }),
+            credentials: "include", // Important: include cookies for session
           });
 
           if (!response.ok) {
@@ -157,7 +139,7 @@ export function ResetPasswordForm({ token: providedToken, onSubmit }: ResetPassw
         setSuccess(true);
       } catch (err) {
         const errorMessage = err instanceof Error ? err.message : "Błąd serwera – spróbuj ponownie";
-        if (errorMessage.includes("token") || errorMessage.includes("wygasł")) {
+        if (errorMessage.includes("token") || errorMessage.includes("wygasł") || errorMessage.includes("nieprawidłowy")) {
           setTokenError(true);
         }
         setError(errorMessage);
@@ -165,7 +147,7 @@ export function ResetPasswordForm({ token: providedToken, onSubmit }: ResetPassw
         setIsLoading(false);
       }
     },
-    [token, password, confirmPassword, onSubmit]
+    [password, confirmPassword, onSubmit]
   );
 
   if (tokenError) {
