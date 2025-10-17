@@ -19,3 +19,7 @@ CI/CD i Hosting:
 - Github Actions do tworzenia pipeline’ów CI/CD
 - DigitalOcean do hostowania aplikacji za pośrednictwem obrazu docker
 
+
+Testowanie:
+- Testy jednostkowe i integracyjne: Vitest (TypeScript, jsdom, coverage c8)
+- Testy end-to-end: Playwright (Chromium/Firefox/WebKit, ślady, zrzuty ekranów w CI)

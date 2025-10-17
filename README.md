@@ -34,6 +34,10 @@ Table of contents
 - Runtime
   - Node.js 22.14.0 (see .nvmrc)
   
+- Testing
+  - Unit & integration: Vitest (TypeScript, jsdom, coverage via c8)
+  - End-to-end: Playwright (Chromium/Firefox/WebKit, traces/screenshots in CI)
+  
 - Suggested project layout
   - `src/` source code
   - `src/layouts/` Astro layouts
@@ -102,6 +106,12 @@ astro     Run Astro CLI directly
 lint      Run ESLint
 lint:fix  Fix lint issues automatically
 format    Format files with Prettier
+test      Run unit tests (Vitest)
+test:watch Run unit tests in watch mode
+test:coverage Run unit tests with coverage (v8)
+e2e       Run Playwright E2E tests (Chromium)
+e2e:ui    Open Playwright UI mode
+e2e:report Open Playwright HTML report
 ```
 
 ### 6. Project scope

@@ -4,7 +4,7 @@ import type { Database } from "../db/database.types";
 import { AuthService } from "../lib/auth.service";
 
 const supabaseUrl = import.meta.env.SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.SUPABASE_KEY;
+const supabaseAnonKey = import.meta.env.SUPABASE_ANON_KEY;
 
 // Protected routes that require authentication
 const PROTECTED_ROUTES = ["/generate"];
