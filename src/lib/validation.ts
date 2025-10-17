@@ -111,3 +111,94 @@ export const resetPasswordSchema = z
   });
 
 export type ResetPasswordCommand = z.infer<typeof resetPasswordSchema>;
+
+// ------------------------------------------------------------------------------------------------
+// Flashcard Validation Functions
+// ------------------------------------------------------------------------------------------------
+
+/**
+ * Maximum character limits for flashcard fields
+ */
+export const FLASHCARD_LIMITS = {
+  FRONT_MAX_LENGTH: 200,
+  BACK_MAX_LENGTH: 500,
+} as const;
+
+/**
+ * Validates flashcard front and back content
+ * Returns error message if invalid, null if valid
+ */
+export function validateFlashcard(front: string, back: string): string | null {
+  // Check if front is empty (after trimming)
+  if (front.trim().length === 0) {
+    return "Przód fiszki nie może być pusty";
+  }
+
+  // Check if back is empty (after trimming)
+  if (back.trim().length === 0) {
+    return "Tył fiszki nie może być pusty";
+  }
+
+  // Check front max length
+  if (front.length > FLASHCARD_LIMITS.FRONT_MAX_LENGTH) {
+    return `Przód fiszki może mieć maksymalnie ${FLASHCARD_LIMITS.FRONT_MAX_LENGTH} znaków`;
+  }
+
+  // Check back max length
+  if (back.length > FLASHCARD_LIMITS.BACK_MAX_LENGTH) {
+    return `Tył fiszki może mieć maksymalnie ${FLASHCARD_LIMITS.BACK_MAX_LENGTH} znaków`;
+  }
+
+  return null;
+}
+
+// ------------------------------------------------------------------------------------------------
+// Text Input Area Validation Functions
+// ------------------------------------------------------------------------------------------------
+
+/**
+ * Character limits for source text input
+ */
+export const TEXT_INPUT_LIMITS = {
+  MIN_LENGTH: 1000,
+  MAX_LENGTH: 10000,
+} as const;
+
+/**
+ * Determines the color state for character counter in TextInputArea
+ * @param textLength - Current text length
+ * @returns Color state string for Tailwind classes
+ */
+export function getCounterColorState(textLength: number): "default" | "warning" | "error" | "success" {
+  if (textLength === 0) {
+    return "default";
+  }
+
+  if (textLength < TEXT_INPUT_LIMITS.MIN_LENGTH) {
+    return "warning"; // Too short (orange)
+  }
+
+  if (textLength > TEXT_INPUT_LIMITS.MAX_LENGTH) {
+    return "error"; // Too long (red/destructive)
+  }
+
+  return "success"; // Valid range (green)
+}
+
+/**
+ * Maps color state to Tailwind CSS classes
+ */
+export function getCounterColorClass(textLength: number): string {
+  const state = getCounterColorState(textLength);
+
+  switch (state) {
+    case "default":
+      return "text-muted-foreground";
+    case "warning":
+      return "text-orange-600 dark:text-orange-400";
+    case "error":
+      return "text-destructive";
+    case "success":
+      return "text-green-600 dark:text-green-400";
+  }
+}

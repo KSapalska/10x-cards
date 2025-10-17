@@ -3,6 +3,7 @@ import type { FlashcardProposalViewModel } from "./FlashcardGenerationView";
 import { Button } from "./ui/button";
 import { Card, CardContent } from "./ui/card";
 import { cn } from "@/lib/utils";
+import { validateFlashcard, FLASHCARD_LIMITS } from "@/lib/validation";
 
 interface FlashcardListItemProps {
   flashcard: FlashcardProposalViewModel;
@@ -20,9 +21,6 @@ export function FlashcardListItem({ flashcard, onAccept, onEdit, onReject }: Fla
   const frontId = useId();
   const backId = useId();
 
-  const MAX_FRONT_LENGTH = 200;
-  const MAX_BACK_LENGTH = 500;
-
   const handleEdit = () => {
     setIsEditing(true);
     setEditedFront(flashcard.front);
@@ -31,21 +29,10 @@ export function FlashcardListItem({ flashcard, onAccept, onEdit, onReject }: Fla
   };
 
   const handleSaveEdit = () => {
-    // Validation
-    if (editedFront.trim().length === 0) {
-      setValidationError("Przód fiszki nie może być pusty");
-      return;
-    }
-    if (editedBack.trim().length === 0) {
-      setValidationError("Tył fiszki nie może być pusty");
-      return;
-    }
-    if (editedFront.length > MAX_FRONT_LENGTH) {
-      setValidationError(`Przód fiszki może mieć maksymalnie ${MAX_FRONT_LENGTH} znaków`);
-      return;
-    }
-    if (editedBack.length > MAX_BACK_LENGTH) {
-      setValidationError(`Tył fiszki może mieć maksymalnie ${MAX_BACK_LENGTH} znaków`);
+    // Use extracted validation function
+    const error = validateFlashcard(editedFront, editedBack);
+    if (error) {
+      setValidationError(error);
       return;
     }
 
@@ -94,13 +81,13 @@ export function FlashcardListItem({ flashcard, onAccept, onEdit, onReject }: Fla
                   className={cn(
                     "w-full rounded-md border bg-background px-3 py-2 text-sm",
                     "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-                    editedFront.length > MAX_FRONT_LENGTH && "border-destructive"
+                    editedFront.length > FLASHCARD_LIMITS.FRONT_MAX_LENGTH && "border-destructive"
                   )}
-                  maxLength={MAX_FRONT_LENGTH}
-                  aria-invalid={editedFront.length > MAX_FRONT_LENGTH}
+                  maxLength={FLASHCARD_LIMITS.FRONT_MAX_LENGTH}
+                  aria-invalid={editedFront.length > FLASHCARD_LIMITS.FRONT_MAX_LENGTH}
                 />
                 <p className="text-xs text-muted-foreground">
-                  {editedFront.length} / {MAX_FRONT_LENGTH} znaków
+                  {editedFront.length} / {FLASHCARD_LIMITS.FRONT_MAX_LENGTH} znaków
                 </p>
               </div>
 
@@ -116,13 +103,13 @@ export function FlashcardListItem({ flashcard, onAccept, onEdit, onReject }: Fla
                   className={cn(
                     "w-full rounded-md border bg-background px-3 py-2 text-sm resize-y",
                     "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-                    editedBack.length > MAX_BACK_LENGTH && "border-destructive"
+                    editedBack.length > FLASHCARD_LIMITS.BACK_MAX_LENGTH && "border-destructive"
                   )}
-                  maxLength={MAX_BACK_LENGTH}
-                  aria-invalid={editedBack.length > MAX_BACK_LENGTH}
+                  maxLength={FLASHCARD_LIMITS.BACK_MAX_LENGTH}
+                  aria-invalid={editedBack.length > FLASHCARD_LIMITS.BACK_MAX_LENGTH}
                 />
                 <p className="text-xs text-muted-foreground">
-                  {editedBack.length} / {MAX_BACK_LENGTH} znaków
+                  {editedBack.length} / {FLASHCARD_LIMITS.BACK_MAX_LENGTH} znaków
                 </p>
               </div>
 

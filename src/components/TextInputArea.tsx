@@ -1,5 +1,6 @@
 import { useId } from "react";
 import { cn } from "@/lib/utils";
+import { getCounterColorClass, TEXT_INPUT_LIMITS } from "@/lib/validation";
 
 interface TextInputAreaProps {
   value: string;
@@ -11,21 +12,11 @@ interface TextInputAreaProps {
 
 export function TextInputArea({ value, onChange, textLength, isValid, disabled = false }: TextInputAreaProps) {
   const inputId = useId();
-  const MIN_LENGTH = 1000;
-  const MAX_LENGTH = 10000;
 
   // Calculate validation state
-  const isTooShort = textLength > 0 && textLength < MIN_LENGTH;
-  const isTooLong = textLength > MAX_LENGTH;
+  const isTooShort = textLength > 0 && textLength < TEXT_INPUT_LIMITS.MIN_LENGTH;
+  const isTooLong = textLength > TEXT_INPUT_LIMITS.MAX_LENGTH;
   const showValidation = textLength > 0;
-
-  // Color coding for character counter
-  const getCounterColor = () => {
-    if (!showValidation) return "text-muted-foreground";
-    if (isTooShort) return "text-orange-600 dark:text-orange-400";
-    if (isTooLong) return "text-destructive";
-    return "text-green-600 dark:text-green-400";
-  };
 
   return (
     <div className="space-y-2">
@@ -55,11 +46,16 @@ export function TextInputArea({ value, onChange, textLength, isValid, disabled =
 
       <div className="flex items-center justify-between text-sm">
         <p id={`${inputId}-description`} className="text-muted-foreground">
-          Wprowadź tekst o długości {MIN_LENGTH}-{MAX_LENGTH.toLocaleString()} znaków
+          Wprowadź tekst o długości {TEXT_INPUT_LIMITS.MIN_LENGTH}-{TEXT_INPUT_LIMITS.MAX_LENGTH.toLocaleString()}{" "}
+          znaków
         </p>
 
-        <p id={`${inputId}-counter`} className={cn("font-medium tabular-nums", getCounterColor())} aria-live="polite">
-          {textLength.toLocaleString()} / {MAX_LENGTH.toLocaleString()}
+        <p
+          id={`${inputId}-counter`}
+          className={cn("font-medium tabular-nums", getCounterColorClass(textLength))}
+          aria-live="polite"
+        >
+          {textLength.toLocaleString()} / {TEXT_INPUT_LIMITS.MAX_LENGTH.toLocaleString()}
         </p>
       </div>
 
@@ -67,12 +63,12 @@ export function TextInputArea({ value, onChange, textLength, isValid, disabled =
         <div className="text-sm" role="alert" aria-live="polite">
           {isTooShort && (
             <p className="text-orange-600 dark:text-orange-400">
-              Potrzebujesz jeszcze {(MIN_LENGTH - textLength).toLocaleString()} znaków
+              Potrzebujesz jeszcze {(TEXT_INPUT_LIMITS.MIN_LENGTH - textLength).toLocaleString()} znaków
             </p>
           )}
           {isTooLong && (
             <p className="text-destructive">
-              Tekst jest za długi o {(textLength - MAX_LENGTH).toLocaleString()} znaków
+              Tekst jest za długi o {(textLength - TEXT_INPUT_LIMITS.MAX_LENGTH).toLocaleString()} znaków
             </p>
           )}
         </div>
