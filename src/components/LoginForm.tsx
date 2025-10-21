@@ -107,13 +107,13 @@ export function LoginForm({ onSubmit }: LoginFormProps) {
   );
 
   return (
-    <Card className="w-full max-w-md">
+    <Card className="w-full max-w-md" data-testid="login-form">
       <CardHeader>
         <CardTitle>Zaloguj się</CardTitle>
         <CardDescription>Wprowadź swoje dane logowania</CardDescription>
       </CardHeader>
 
-      <form onSubmit={handleSubmit} noValidate>
+      <form onSubmit={handleSubmit} noValidate data-testid="login-form-element">
         <CardContent className="space-y-4">
           {error && <ErrorNotification message={error} onDismiss={() => setError(null)} />}
 
@@ -131,6 +131,7 @@ export function LoginForm({ onSubmit }: LoginFormProps) {
               aria-describedby={fieldErrors.email ? `${emailId}-error` : undefined}
               autoComplete="email"
               required
+              data-testid="login-email-input"
             />
             {fieldErrors.email && (
               <p id={`${emailId}-error`} className="text-sm text-destructive" role="alert">
@@ -153,6 +154,7 @@ export function LoginForm({ onSubmit }: LoginFormProps) {
               aria-describedby={fieldErrors.password ? `${passwordId}-error` : undefined}
               autoComplete="current-password"
               required
+              data-testid="login-password-input"
             />
             {fieldErrors.password && (
               <p id={`${passwordId}-error`} className="text-sm text-destructive" role="alert">
@@ -185,7 +187,7 @@ export function LoginForm({ onSubmit }: LoginFormProps) {
         </CardContent>
 
         <CardFooter className="flex flex-col gap-4">
-          <Button type="submit" className="w-full" disabled={isLoading}>
+          <Button type="submit" className="w-full" disabled={isLoading} data-testid="login-submit-button">
             {isLoading ? "Logowanie..." : "Zaloguj się"}
           </Button>
 
@@ -203,4 +205,3 @@ export function LoginForm({ onSubmit }: LoginFormProps) {
     </Card>
   );
 }
-

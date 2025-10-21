@@ -7,7 +7,7 @@ export const prerender = false;
 /**
  * POST /api/auth/reset-password
  * Resets user password using session from email link
- * 
+ *
  * Note: Supabase automatically sets the session when user clicks the reset link from email.
  * The token from URL is handled by Supabase client automatically via middleware.
  *
@@ -93,4 +93,3 @@ export const POST: APIRoute = async ({ request, locals }) => {
     );
   }
 };
-

@@ -19,7 +19,7 @@ export function TextInputArea({ value, onChange, textLength, isValid, disabled =
   const showValidation = textLength > 0;
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-2" data-testid="text-input-area">
       <label htmlFor={inputId} className="block text-sm font-medium text-foreground">
         Wklej tekst źródłowy
       </label>
@@ -42,6 +42,7 @@ export function TextInputArea({ value, onChange, textLength, isValid, disabled =
         )}
         aria-invalid={showValidation && !isValid}
         aria-describedby={`${inputId}-description ${inputId}-counter`}
+        data-testid="source-text-textarea"
       />
 
       <div className="flex items-center justify-between text-sm">

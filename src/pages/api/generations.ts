@@ -52,10 +52,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
 
     // Pass user_id from authenticated session
     const generationService = new GenerationService(locals.supabase, openRouterApiKey);
-    const result = await generationService.generateFlashcards(
-      validationResult.data.source_text,
-      locals.user.id
-    );
+    const result = await generationService.generateFlashcards(validationResult.data.source_text, locals.user.id);
 
     return new Response(JSON.stringify(result), {
       status: 201,

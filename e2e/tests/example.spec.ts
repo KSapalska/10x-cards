@@ -7,5 +7,3 @@ test.describe("Landing redirect flow", () => {
     await expect(page.getByRole("heading", { name: /Zaloguj się/i })).toBeVisible();
   });
 });
-
-

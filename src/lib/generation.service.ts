@@ -57,7 +57,7 @@ Odpowiadaj wyłącznie w formacie JSON zgodnym ze schematem.`;
 
 export class GenerationService {
   private readonly openRouter: OpenRouterService;
-  
+
   constructor(
     private readonly supabase: SupabaseClient,
     openRouterApiKey: string
@@ -65,7 +65,7 @@ export class GenerationService {
     this.openRouter = new OpenRouterService({
       apiKey: openRouterApiKey,
     });
-    
+
     // Konfiguracja OpenRouter dla generowania flashcards
     this.openRouter.setSystemMessage(SYSTEM_PROMPT);
     this.openRouter.setResponseFormat(FLASHCARDS_RESPONSE_SCHEMA);
@@ -120,7 +120,7 @@ export class GenerationService {
 
       // Parsuj odpowiedź JSON
       const parsedResponse = JSON.parse(responseContent) as {
-        flashcards: Array<{ front: string; back: string }>;
+        flashcards: { front: string; back: string }[];
       };
 
       // Walidacja odpowiedzi
@@ -135,7 +135,7 @@ export class GenerationService {
       // Konwertuj na FlashcardProposalDto
       const proposals: FlashcardProposalDto[] = parsedResponse.flashcards.map((card) => ({
         front: card.front.substring(0, 200), // Upewnij się że nie przekracza limitu
-        back: card.back.substring(0, 500),   // Upewnij się że nie przekracza limitu
+        back: card.back.substring(0, 500), // Upewnij się że nie przekracza limitu
         source: "ai-full" as const,
       }));
 

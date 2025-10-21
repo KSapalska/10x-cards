@@ -10,10 +10,12 @@ interface Props {
 const { title = "10x Astro Starter", showHeader = false } = Astro.props;
 
 // Get user from locals (set by middleware)
-const user = Astro.locals.user ? {
-  id: Astro.locals.user.id,
-  email: Astro.locals.user.email || ""
-} : null;
+const user = Astro.locals.user
+  ? {
+      id: Astro.locals.user.id,
+      email: Astro.locals.user.email || "",
+    }
+  : null;
 ---
 
 <!doctype html>

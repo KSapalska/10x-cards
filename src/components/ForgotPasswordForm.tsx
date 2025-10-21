@@ -92,7 +92,8 @@ export function ForgotPasswordForm({ onSubmit }: ForgotPasswordFormProps) {
         <CardContent>
           <div className="rounded-lg bg-chart-2/10 p-4 space-y-2">
             <p className="text-sm text-chart-2">
-              Jeśli konto z adresem <strong>{email}</strong> istnieje w naszej bazie, otrzymasz wiadomość email z linkiem do resetowania hasła.
+              Jeśli konto z adresem <strong>{email}</strong> istnieje w naszej bazie, otrzymasz wiadomość email z
+              linkiem do resetowania hasła.
             </p>
             <p className="text-sm text-muted-foreground">
               Link jest ważny przez 1 godzinę. Jeśli nie widzisz wiadomości, sprawdź folder spam.
@@ -101,11 +102,7 @@ export function ForgotPasswordForm({ onSubmit }: ForgotPasswordFormProps) {
         </CardContent>
 
         <CardFooter className="flex flex-col gap-4">
-          <Button
-            type="button"
-            className="w-full"
-            onClick={() => (window.location.href = "/auth/login")}
-          >
+          <Button type="button" className="w-full" onClick={() => (window.location.href = "/auth/login")}>
             Powrót do logowania
           </Button>
 

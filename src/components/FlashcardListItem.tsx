@@ -63,6 +63,7 @@ export function FlashcardListItem({ flashcard, onAccept, onEdit, onReject }: Fla
         flashcard.accepted && "border-green-500 bg-green-50 dark:bg-green-950/20",
         flashcard.edited && "border-blue-500 bg-blue-50 dark:bg-blue-950/20"
       )}
+      data-testid="flashcard-item"
     >
       <CardContent className="flex flex-col h-full p-4">
         {isEditing ? (
@@ -187,13 +188,26 @@ export function FlashcardListItem({ flashcard, onAccept, onEdit, onReject }: Fla
                 variant={flashcard.accepted ? "default" : "outline"}
                 size="sm"
                 aria-label={flashcard.accepted ? "Fiszka zaakceptowana" : "Zaakceptuj fiszkę"}
+                data-testid="flashcard-accept-button"
               >
                 {flashcard.accepted ? "Zaakceptowano" : "Zatwierdź"}
               </Button>
-              <Button onClick={handleEdit} variant="outline" size="sm" aria-label="Edytuj fiszkę">
+              <Button
+                onClick={handleEdit}
+                variant="outline"
+                size="sm"
+                aria-label="Edytuj fiszkę"
+                data-testid="flashcard-edit-button"
+              >
                 Edytuj
               </Button>
-              <Button onClick={handleReject} variant="destructive" size="sm" aria-label="Odrzuć i usuń fiszkę">
+              <Button
+                onClick={handleReject}
+                variant="destructive"
+                size="sm"
+                aria-label="Odrzuć i usuń fiszkę"
+                data-testid="flashcard-reject-button"
+              >
                 Odrzuć
               </Button>
             </div>

@@ -139,7 +139,11 @@ export function ResetPasswordForm({ onSubmit }: ResetPasswordFormProps) {
         setSuccess(true);
       } catch (err) {
         const errorMessage = err instanceof Error ? err.message : "Błąd serwera – spróbuj ponownie";
-        if (errorMessage.includes("token") || errorMessage.includes("wygasł") || errorMessage.includes("nieprawidłowy")) {
+        if (
+          errorMessage.includes("token") ||
+          errorMessage.includes("wygasł") ||
+          errorMessage.includes("nieprawidłowy")
+        ) {
           setTokenError(true);
         }
         setError(errorMessage);
@@ -165,7 +169,12 @@ export function ResetPasswordForm({ onSubmit }: ResetPasswordFormProps) {
         </CardContent>
 
         <CardFooter>
-          <Button type="button" variant="outline" className="w-full" onClick={() => (window.location.href = "/auth/forgot-password")}>
+          <Button
+            type="button"
+            variant="outline"
+            className="w-full"
+            onClick={() => (window.location.href = "/auth/forgot-password")}
+          >
             Wyślij nowy link resetujący
           </Button>
         </CardFooter>
@@ -287,4 +296,3 @@ export function ResetPasswordForm({ onSubmit }: ResetPasswordFormProps) {
     </Card>
   );
 }
-

@@ -6,7 +6,7 @@ interface SkeletonLoaderProps {
 
 export function SkeletonLoader({ count = 3 }: SkeletonLoaderProps) {
   return (
-    <div className="space-y-4" role="status" aria-label="Ładowanie propozycji fiszek">
+    <div className="space-y-4" role="status" aria-label="Ładowanie propozycji fiszek" data-testid="skeleton-loader">
       {Array.from({ length: count }).map((_, index) => (
         <div key={index} className="border rounded-lg p-6 bg-card">
           <div className="space-y-4">

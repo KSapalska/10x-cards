@@ -26,8 +26,8 @@ export const onRequest = defineMiddleware(async (context, next) => {
   const urlRefreshToken = context.url.searchParams.get("refresh_token");
 
   // Get access and refresh tokens from cookies or URL
-  let accessToken = context.cookies.get("sb-access-token")?.value || urlAccessToken;
-  let refreshToken = context.cookies.get("sb-refresh-token")?.value || urlRefreshToken;
+  const accessToken = context.cookies.get("sb-access-token")?.value || urlAccessToken;
+  const refreshToken = context.cookies.get("sb-refresh-token")?.value || urlRefreshToken;
 
   // Create a Supabase client for this request
   // If we have tokens, set them in the client

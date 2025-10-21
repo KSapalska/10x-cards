@@ -13,6 +13,7 @@ export function GenerateButton({ onClick, disabled, isLoading }: GenerateButtonP
       disabled={disabled}
       aria-label={isLoading ? "Generowanie fiszek w toku" : "Generuj fiszki"}
       className="min-w-[140px]"
+      data-testid="generate-button"
     >
       {isLoading ? (
         <>

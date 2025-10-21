@@ -263,12 +263,9 @@ export class AuthService {
    */
   async forgotPassword(email: string): Promise<AuthResult> {
     try {
-      const { error } = await this.supabase.auth.resetPasswordForEmail(
-        email.toLowerCase().trim(),
-        {
-          redirectTo: `${import.meta.env.PUBLIC_SITE_URL || "http://localhost:4321"}/auth/reset-password`,
-        }
-      );
+      const { error } = await this.supabase.auth.resetPasswordForEmail(email.toLowerCase().trim(), {
+        redirectTo: `${import.meta.env.PUBLIC_SITE_URL || "http://localhost:4321"}/auth/reset-password`,
+      });
 
       if (error) {
         console.error("Forgot password error:", error);
@@ -299,7 +296,10 @@ export class AuthService {
   async resetPassword(newPassword: string): Promise<AuthResult> {
     try {
       // Check if user has an active session (from password reset email link)
-      const { data: { session }, error: sessionError } = await this.supabase.auth.getSession();
+      const {
+        data: { session },
+        error: sessionError,
+      } = await this.supabase.auth.getSession();
 
       if (sessionError || !session) {
         console.error("Session error:", sessionError);
@@ -334,4 +334,3 @@ export class AuthService {
     }
   }
 }
-

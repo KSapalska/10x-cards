@@ -69,7 +69,7 @@ export function BulkSaveButton({ flashcards, generationId, onSuccess, onError }:
   }
 
   return (
-    <div className="flex flex-col sm:flex-row gap-3 p-4 rounded-lg border bg-card">
+    <div className="flex flex-col sm:flex-row gap-3 p-4 rounded-lg border bg-card" data-testid="bulk-save-section">
       <div className="flex-1">
         <h4 className="text-sm font-semibold mb-1">Gotowe do zapisu?</h4>
         <p className="text-sm text-muted-foreground">
@@ -82,6 +82,7 @@ export function BulkSaveButton({ flashcards, generationId, onSuccess, onError }:
           disabled={!hasAccepted || isSaving}
           variant="default"
           aria-label={`Zapisz ${acceptedFlashcards.length} zaakceptowanych fiszek`}
+          data-testid="save-accepted-button"
         >
           {isSaving ? "Zapisywanie..." : `Zapisz zaakceptowane (${acceptedFlashcards.length})`}
         </Button>
@@ -90,6 +91,7 @@ export function BulkSaveButton({ flashcards, generationId, onSuccess, onError }:
           disabled={isSaving}
           variant="outline"
           aria-label={`Zapisz wszystkie ${flashcards.length} fiszek`}
+          data-testid="save-all-button"
         >
           {isSaving ? "Zapisywanie..." : `Zapisz wszystkie (${flashcards.length})`}
         </Button>
