@@ -1,0 +1,11 @@
+---
+import Layout from "../layouts/Layout.astro";
+import StudySessionView from "../components/StudySessionView.tsx";
+---
+
+<Layout title="10x-cards | Study Session">
+  <main class="container mx-auto px-4 py-8">
+    <h1 class="text-3xl font-bold mb-6 text-center">Study Session</h1>
+    <StudySessionView client:load />
+  </main>
+</Layout>

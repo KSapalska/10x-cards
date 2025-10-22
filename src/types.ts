@@ -117,3 +117,12 @@ export type GenerationErrorLogDto = Pick<
   GenerationErrorLog,
   "id" | "error_code" | "error_message" | "model" | "source_text_hash" | "source_text_length" | "created_at" | "user_id"
 >;
+
+// ------------------------------------------------------------------------------------------------
+// 11. Rate Flashcard DTO
+//     Used in the POST /api/session/rate endpoint to rate a flashcard.
+// ------------------------------------------------------------------------------------------------
+export interface RateFlashcardDto {
+  flashcardId: number;
+  rating: 1 | 2 | 3 | 4;
+}

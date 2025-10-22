@@ -160,6 +160,32 @@ export function AuthHeader({ user }: AuthHeaderProps) {
                         Moje fiszki
                       </a>
 
+                      <a
+                        href="/session"
+                        className="flex items-center gap-2 px-3 py-2 text-sm rounded-md hover:bg-accent hover:text-accent-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                        role="menuitem"
+                      >
+                        <svg
+                          className="size-4"
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="24"
+                          height="24"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          aria-hidden="true"
+                        >
+                          <path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v1.2a1 1 0 0 0 1 1h.3a1 1 0 0 0 .8-1.6L12.9 4a1 1 0 0 0-1.8 0L9.9 6.1A1 1 0 0 0 10.7 7h.3a1 1 0 0 0 1-1V4.8a2.5 2.5 0 0 1-2.5-2.5" />
+                          <path d="M14.5 2a2.5 2.5 0 0 0-2.5 2.5v1.2a1 1 0 0 1-1 1h-.3a1 1 0 0 1-.8-1.6L11.1 4a1 1 0 0 1 1.8 0l1.2 1.1a1 1 0 0 1-.8 1.6h-.3a1 1 0 0 1-1-1V4.8a2.5 2.5 0 0 0 2.5-2.5" />
+                          <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
+                          <path d="M12 12a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" />
+                        </svg>
+                        Sesja nauki
+                      </a>
+
                       <button
                         onClick={handleLogout}
                         disabled={isLoggingOut}
