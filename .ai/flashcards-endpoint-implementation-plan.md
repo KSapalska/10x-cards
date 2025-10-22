@@ -66,13 +66,4 @@ Endpoint POST /flashcards służy do tworzenia jednego lub wielu flashcards. Umo
 - Dodatkowo: Możliwe logowanie błędów (i opcjonalne zapisywanie w tabeli generation_error_logs, jeżeli endpoint ma współpracować również z modułem AI generującym flashcards).
 
 ## 8. Rozważania dotyczące wydajności
-- Batch Processing: Efektywne przetwarzanie wielu flashcards w jednym żądaniu poprzez wykorzystanie operacji batch insert.
-
-## 9. Etapy wdrożenia
-1. Utworzenie nowego endpointu w katalogu `/src/pages/api/flashcards.ts`.
-2. Implementacja walidacji danych wejściowych przy użyciu biblioteki takiej jak Zod lub Joi, zgodnie z regułami walidacji:
-   - Maksymalna długość `front` (200 znaków) i `back` (500 znaków).
-   - Weryfikacja poprawności wartości `source` i odpowiadającego `generation_id`.
-3. Utworzenie lub modyfikacja serwisu biznesowego (FlashcardService, `src/lib/flashcard.service.ts`) odpowiedzialnego za tworzenie flashcards, który będzie zarządzał operacjami na bazie danych.
-4. Integracja z bazą danych: Implementacja operacji batch insert dla tabeli `flashcards` oraz zapewnienie powiązania flashcards z `user_id` i, jeśli dotyczy, z `generation_id`.
-5. Dodanie mechanizmu obsługi błędów wraz z odpowiednim logowaniem oraz implementacją rollback w przypadku nieudanej operacji.
+- npx supabase start

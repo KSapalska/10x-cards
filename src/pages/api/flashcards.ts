@@ -2,6 +2,7 @@ import { z } from "zod";
 import type { APIRoute } from "astro";
 import type { FlashcardsCreateCommand } from "../../types";
 import { FlashcardService } from "../../lib/flashcard.service";
+import { flashcardsQuerySchema } from "../../lib/validation";
 
 export const prerender = false;
 
@@ -32,6 +33,82 @@ const validateGenerationIdBySource = (data: z.infer<typeof flashcardCreateSchema
     return false;
   }
   return true;
+};
+
+export const GET: APIRoute = async ({ url, locals }) => {
+  // Check authentication - user must be logged in
+  if (!locals.user) {
+    return new Response(
+      JSON.stringify({
+        error: "Unauthorized - please log in",
+      }),
+      {
+        status: 401,
+        headers: { "Content-Type": "application/json" },
+      }
+    );
+  }
+
+  try {
+    // Parse and validate query parameters
+    const queryParams: Record<string, string | undefined> = {};
+    
+    const page = url.searchParams.get("page");
+    const limit = url.searchParams.get("limit");
+    const sort = url.searchParams.get("sort");
+    const order = url.searchParams.get("order");
+    const source = url.searchParams.get("source");
+    const generation_id = url.searchParams.get("generation_id");
+    
+    if (page) queryParams.page = page;
+    if (limit) queryParams.limit = limit;
+    if (sort) queryParams.sort = sort;
+    if (order) queryParams.order = order;
+    if (source) queryParams.source = source;
+    if (generation_id) queryParams.generation_id = generation_id;
+
+    const validationResult = flashcardsQuerySchema.safeParse(queryParams);
+
+    if (!validationResult.success) {
+      return new Response(
+        JSON.stringify({
+          error: "Invalid query parameters",
+          details: validationResult.error.errors,
+        }),
+        {
+          status: 400,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+    }
+
+    // Initialize flashcard service
+    const flashcardService = new FlashcardService(locals.supabase);
+
+    // Get flashcards with pagination and filters
+    const result = await flashcardService.getFlashcards(locals.user.id, validationResult.data);
+
+    return new Response(JSON.stringify(result), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    });
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error("Error fetching flashcards:", error);
+
+    const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";
+
+    return new Response(
+      JSON.stringify({
+        error: "Internal server error",
+        details: errorMessage,
+      }),
+      {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
+      }
+    );
+  }
 };
 
 export const POST: APIRoute = async ({ request, locals }) => {

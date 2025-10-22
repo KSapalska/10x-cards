@@ -199,3 +199,64 @@ export function getCounterColorClass(textLength: number): string {
       return "text-green-600 dark:text-green-400";
   }
 }
+
+// ------------------------------------------------------------------------------------------------
+// Flashcards API Validation Schemas
+// ------------------------------------------------------------------------------------------------
+
+/**
+ * Validation schema for GET /api/flashcards query parameters
+ */
+export const flashcardsQuerySchema = z
+  .object({
+    page: z.string().optional(),
+    limit: z.string().optional(),
+    sort: z.string().optional(),
+    order: z.string().optional(),
+    source: z.string().optional(),
+    generation_id: z.string().optional(),
+  })
+  .transform((data) => ({
+    page: data.page ? parseInt(data.page, 10) : 1,
+    limit: data.limit ? parseInt(data.limit, 10) : 10,
+    sort: (data.sort as "created_at" | "updated_at" | "front" | "source") || "created_at",
+    order: (data.order as "asc" | "desc") || "desc",
+    source: data.source as "ai-full" | "ai-edited" | "manual" | undefined,
+    generation_id: data.generation_id ? parseInt(data.generation_id, 10) : undefined,
+  }))
+  .refine(
+    (data) => {
+      if (data.page < 1) return false;
+      if (data.limit < 1 || data.limit > 100) return false;
+      if (!["created_at", "updated_at", "front", "source"].includes(data.sort)) return false;
+      if (!["asc", "desc"].includes(data.order)) return false;
+      if (data.source && !["ai-full", "ai-edited", "manual"].includes(data.source)) return false;
+      if (data.generation_id !== undefined && (isNaN(data.generation_id) || data.generation_id < 1)) return false;
+      return true;
+    },
+    {
+      message: "Invalid query parameters",
+    }
+  );
+
+export type FlashcardsQueryParams = z.infer<typeof flashcardsQuerySchema>;
+
+/**
+ * Validation schema for flashcard ID parameter
+ */
+export const flashcardIdSchema = z.coerce.number().int().positive("Flashcard ID must be a positive number");
+
+/**
+ * Validation schema for PUT /api/flashcards/[id] request body
+ * At least one field (front or back) must be provided
+ */
+export const flashcardUpdateSchema = z
+  .object({
+    front: z.string().trim().min(1, "Front cannot be empty").max(FLASHCARD_LIMITS.FRONT_MAX_LENGTH).optional(),
+    back: z.string().trim().min(1, "Back cannot be empty").max(FLASHCARD_LIMITS.BACK_MAX_LENGTH).optional(),
+  })
+  .refine((data) => data.front !== undefined || data.back !== undefined, {
+    message: "At least one field (front or back) must be provided",
+  });
+
+export type FlashcardUpdateCommand = z.infer<typeof flashcardUpdateSchema>;

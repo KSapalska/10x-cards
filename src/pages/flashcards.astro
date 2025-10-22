@@ -1,0 +1,17 @@
+---
+import Layout from "../layouts/Layout.astro";
+import FlashcardsView from "../components/flashcards/FlashcardsView";
+
+// Protected route - middleware handles redirect if not authenticated
+// This is a safety check in case middleware is bypassed
+if (!Astro.locals.session) {
+  return Astro.redirect("/auth/login?returnTo=/flashcards");
+}
+---
+
+<Layout title="Moje fiszki - 10xCards" showHeader={true}>
+  <main class="min-h-screen bg-background pt-16">
+    <FlashcardsView client:load />
+  </main>
+</Layout>
+

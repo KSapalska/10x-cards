@@ -1,4 +1,10 @@
-import type { FlashcardCreateDto, FlashcardDto } from "../types";
+import type {
+  FlashcardCreateDto,
+  FlashcardDto,
+  FlashcardsListResponseDto,
+  FlashcardUpdateDto,
+  Source,
+} from "../types";
 import type { SupabaseClient } from "../db/supabase.client";
 
 export class FlashcardService {
@@ -127,5 +133,154 @@ export class FlashcardService {
     }
 
     return (flashcards as FlashcardDto[]) || [];
+  }
+
+  /**
+   * Retrieves flashcards with pagination, filtering and sorting
+   * @param userId User ID from authenticated session
+   * @param options Pagination, filtering and sorting options
+   * @returns Paginated list of flashcards
+   */
+  async getFlashcards(
+    userId: string,
+    options: {
+      page: number;
+      limit: number;
+      sort?: "created_at" | "updated_at" | "front" | "source";
+      order?: "asc" | "desc";
+      source?: Source;
+      generation_id?: number;
+    }
+  ): Promise<FlashcardsListResponseDto> {
+    const { page, limit, sort = "created_at", order = "desc", source, generation_id } = options;
+
+    // Calculate offset for pagination
+    const offset = (page - 1) * limit;
+
+    // Build base query
+    let query = this.supabase
+      .from("flashcards")
+      .select("id, front, back, source, generation_id, created_at, updated_at", { count: "exact" })
+      .eq("user_id", userId);
+
+    // Apply filters
+    if (source) {
+      query = query.eq("source", source);
+    }
+
+    if (generation_id !== undefined) {
+      query = query.eq("generation_id", generation_id);
+    }
+
+    // Apply sorting
+    query = query.order(sort, { ascending: order === "asc" });
+
+    // Apply pagination
+    query = query.range(offset, offset + limit - 1);
+
+    const { data: flashcards, error, count } = await query;
+
+    if (error) {
+      throw new Error(`Failed to retrieve flashcards: ${error.message}`);
+    }
+
+    return {
+      data: (flashcards as FlashcardDto[]) || [],
+      pagination: {
+        page,
+        limit,
+        total: count || 0,
+      },
+    };
+  }
+
+  /**
+   * Retrieves a single flashcard by ID
+   * @param id Flashcard ID
+   * @param userId User ID from authenticated session (for RLS)
+   * @returns Flashcard or null if not found
+   */
+  async getFlashcardById(id: number, userId: string): Promise<FlashcardDto | null> {
+    const { data: flashcard, error } = await this.supabase
+      .from("flashcards")
+      .select("id, front, back, source, generation_id, created_at, updated_at")
+      .eq("id", id)
+      .eq("user_id", userId)
+      .single();
+
+    if (error) {
+      // If error is "not found", return null instead of throwing
+      if (error.code === "PGRST116") {
+        return null;
+      }
+      throw new Error(`Failed to retrieve flashcard: ${error.message}`);
+    }
+
+    return flashcard as FlashcardDto;
+  }
+
+  /**
+   * Updates an existing flashcard
+   * Automatically changes source from "ai-full" to "ai-edited" when editing AI-generated flashcards
+   * @param id Flashcard ID
+   * @param userId User ID from authenticated session (for RLS)
+   * @param updateData Data to update
+   * @returns Updated flashcard
+   */
+  async updateFlashcard(id: number, userId: string, updateData: FlashcardUpdateDto): Promise<FlashcardDto> {
+    // First, get the existing flashcard to check its source
+    const existingFlashcard = await this.getFlashcardById(id, userId);
+
+    if (!existingFlashcard) {
+      throw new Error("Flashcard not found");
+    }
+
+    // Prepare update data
+    const dataToUpdate: Record<string, string | number | null> = {};
+
+    if (updateData.front !== undefined) {
+      dataToUpdate.front = updateData.front;
+    }
+
+    if (updateData.back !== undefined) {
+      dataToUpdate.back = updateData.back;
+    }
+
+    // Auto-change source from "ai-full" to "ai-edited" when editing
+    if (existingFlashcard.source === "ai-full") {
+      dataToUpdate.source = "ai-edited";
+    }
+
+    // Perform update
+    const { data: updatedFlashcard, error } = await this.supabase
+      .from("flashcards")
+      .update(dataToUpdate)
+      .eq("id", id)
+      .eq("user_id", userId)
+      .select("id, front, back, source, generation_id, created_at, updated_at")
+      .single();
+
+    if (error) {
+      throw new Error(`Failed to update flashcard: ${error.message}`);
+    }
+
+    if (!updatedFlashcard) {
+      throw new Error("Flashcard not found after update");
+    }
+
+    return updatedFlashcard as FlashcardDto;
+  }
+
+  /**
+   * Deletes a flashcard
+   * @param id Flashcard ID
+   * @param userId User ID from authenticated session (for RLS)
+   */
+  async deleteFlashcard(id: number, userId: string): Promise<void> {
+    const { error } = await this.supabase.from("flashcards").delete().eq("id", id).eq("user_id", userId);
+
+    if (error) {
+      throw new Error(`Failed to delete flashcard: ${error.message}`);
+    }
   }
 }
