@@ -43,7 +43,9 @@ const user = Astro.locals.user
   </head>
   <body>
     {showHeader && <AuthHeader user={user} client:load />}
-    <slot />
+    <main class:list={[{ "pt-16": showHeader }]}>
+      <slot />
+    </main>
   </body>
 </html>
 
