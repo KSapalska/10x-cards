@@ -287,7 +287,7 @@ describe("FlashcardService", () => {
       });
 
       expect(result.source).toBe("ai-edited");
-      
+
       // Verify update was called with source: "ai-edited"
       const updateCallArgs = updateQuery.update.mock.calls[0][0];
       expect(updateCallArgs).toHaveProperty("source", "ai-edited");
@@ -348,9 +348,7 @@ describe("FlashcardService", () => {
 
       vi.mocked(mockSupabase.from).mockReturnValue(getQuery as any);
 
-      await expect(service.updateFlashcard(999, "user-123", { front: "New" })).rejects.toThrow(
-        "Flashcard not found"
-      );
+      await expect(service.updateFlashcard(999, "user-123", { front: "New" })).rejects.toThrow("Flashcard not found");
     });
   });
 
@@ -392,4 +390,3 @@ describe("FlashcardService", () => {
     });
   });
 });
-

@@ -205,9 +205,7 @@ export default function FlashcardsView() {
           />
 
           {/* Pagination */}
-          {data && data.pagination && (
-            <Pagination pagination={data.pagination} onPageChange={handlePageChange} />
-          )}
+          {data && data.pagination && <Pagination pagination={data.pagination} onPageChange={handlePageChange} />}
         </CardContent>
       </Card>
 
@@ -239,4 +237,3 @@ export default function FlashcardsView() {
     </div>
   );
 }
-

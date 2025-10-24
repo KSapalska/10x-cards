@@ -177,4 +177,3 @@ export function AddFlashcardModal({ isOpen, onClose, onSuccess, onAdd, isAdding 
     </div>
   );
 }
-

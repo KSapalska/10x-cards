@@ -17,11 +17,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     }
 
     const srService = new SpacedRepetitionService(locals.supabase);
-    const updatedFlashcard = await srService.rateFlashcard(
-      session.user.id,
-      flashcardId,
-      rating as FSRS.Rating
-    );
+    const updatedFlashcard = await srService.rateFlashcard(session.user.id, flashcardId, rating as FSRS.Rating);
 
     return new Response(JSON.stringify(updatedFlashcard), {
       status: 200,

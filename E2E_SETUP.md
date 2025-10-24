@@ -17,6 +17,7 @@ npx playwright install
 ## Krok 2: Konfiguracja pliku .env.test
 
 1. Skopiuj plik `.env.test.example` jako `.env.test`:
+
    ```bash
    copy .env.test.example .env.test
    ```
@@ -71,12 +72,14 @@ npm run e2e:report
 Dodałem selektory `data-testid` do następujących komponentów:
 
 **LoginForm:**
+
 - `login-form` - główny kontener formularza
 - `login-email-input` - pole email
 - `login-password-input` - pole hasła
 - `login-submit-button` - przycisk logowania
 
 **Strona generowania:**
+
 - `text-input-area` - obszar wprowadzania tekstu
 - `source-text-textarea` - textarea z tekstem źródłowym
 - `generate-button` - przycisk generowania
@@ -93,11 +96,13 @@ Dodałem selektory `data-testid` do następujących komponentów:
 ### Page Object Models (POM)
 
 **LoginPage (`e2e/tests/pages/LoginPage.ts`):**
+
 - `goto()` - przejście do strony logowania
 - `assertOnPage()` - weryfikacja czy jesteśmy na stronie
 - `login(email, password)` - logowanie użytkownika
 
 **GeneratePage (`e2e/tests/pages/GeneratePage.ts`):**
+
 - `goto()` - przejście do strony generowania
 - `assertOnPage()` - weryfikacja czy jesteśmy na stronie
 - `fillSourceText(text)` - wypełnienie pola tekstem
@@ -115,6 +120,7 @@ Dodałem selektory `data-testid` do następujących komponentów:
 ### Testy E2E (`e2e/tests/flashcard-generation.spec.ts`)
 
 **Test 1: "should generate flashcards from source text"**
+
 - Logowanie użytkownika
 - Wypełnienie pola tekstem źródłowym (1000+ znaków)
 - Kliknięcie przycisku generowania
@@ -123,6 +129,7 @@ Dodałem selektory `data-testid` do następujących komponentów:
 - Weryfikacja widoczności sekcji zapisywania
 
 **Test 2: "should accept flashcards and save them"**
+
 - Generowanie fiszek
 - Akceptacja wybranych fiszek
 - Zapis zaakceptowanych fiszek
@@ -130,11 +137,13 @@ Dodałem selektory `data-testid` do następujących komponentów:
 - Weryfikacja wyczyszczenia listy po zapisie
 
 **Test 3: "should reject unwanted flashcards"**
+
 - Generowanie fiszek
 - Odrzucenie fiszki
 - Weryfikacja zmniejszenia liczby fiszek
 
 **Test 4: "should disable generate button with insufficient text"**
+
 - Wprowadzenie krótkiego tekstu (< 1000 znaków)
 - Weryfikacja że przycisk generowania jest wyłączony
 
@@ -176,16 +185,19 @@ Zgodnie z kursem, możesz rozważyć:
 ## Troubleshooting
 
 **Problem: Testy się nie uruchamiają**
+
 - Sprawdź czy aplikacja działa na http://localhost:4321
 - Sprawdź czy plik .env.test istnieje i ma poprawne wartości
 - Sprawdź czy dotenv jest zainstalowany
 
 **Problem: Test logowania failuje**
+
 - Sprawdź czy użytkownik testowy istnieje w bazie
 - Sprawdź czy email jest potwierdzony
 - Sprawdź dane w .env.test
 
 **Problem: Timeout podczas generowania**
+
 - Sprawdź czy masz dostęp do OpenRouter API
 - Sprawdź czy klucz API jest poprawny
 - Zwiększ timeout w teście jeśli potrzeba
@@ -193,5 +205,3 @@ Zgodnie z kursem, możesz rozważyć:
 ## Gratulacje! 🎉
 
 Udało Ci się zaimplementować kompleksowe testy E2E dla aplikacji 10x-cards!
-
-

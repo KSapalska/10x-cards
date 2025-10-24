@@ -26,7 +26,7 @@ export class LoginPage {
   async login(email: string, password: string) {
     // Wait for React to hydrate and form to be interactive
     await this.page.waitForTimeout(1000);
-    
+
     await this.emailInput.fill(email);
     await this.passwordInput.fill(password);
     await this.submitButton.click();

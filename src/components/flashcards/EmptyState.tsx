@@ -63,11 +63,7 @@ export function EmptyState({ onAddClick, onGenerateClick }: EmptyStateProps) {
               strokeWidth={2}
               aria-hidden="true"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M13 10V3L4 14h7v7l9-11h-7z"
-              />
+              <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
             </svg>
             Generuj z tekstu
           </Button>
@@ -76,4 +72,3 @@ export function EmptyState({ onAddClick, onGenerateClick }: EmptyStateProps) {
     </Card>
   );
 }
-

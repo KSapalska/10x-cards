@@ -2,45 +2,45 @@
 
 ```yaml
 - generic [ref=e1]:
-  - banner [ref=e3]:
-    - generic [ref=e4]:
-      - link "10x Cards" [ref=e6] [cursor=pointer]:
-        - /url: /generate
-      - generic [ref=e7]:
-        - button "Przełącz na tryb ciemny" [ref=e8]:
-          - img
-        - button "Avatar użytkownika user1@gmail.com" [ref=e10]:
-          - generic "Avatar użytkownika" [ref=e11]:
-            - generic [ref=e12]: U
-          - generic [ref=e13]: user1@gmail.com
-          - img [ref=e14]
-  - main [ref=e16]:
-    - generic [ref=e19]:
-      - generic [ref=e20]:
-        - heading "Wygeneruj fiszki z tekstu" [level=2] [ref=e21]
-        - generic [ref=e22]: Wklej tekst (1000-10000 znaków), a AI wygeneruje dla Ciebie propozycje fiszek do nauki
-      - generic [ref=e23]:
-        - generic [ref=e24]:
-          - generic [ref=e25]: Wklej tekst źródłowy
-          - textbox "Wklej tekst źródłowy" [active] [ref=e26]:
-            - /placeholder: Wklej tutaj tekst, z którego chcesz wygenerować fiszki (minimum 1000 znaków)...
-            - text: "TypeScript to typowany nadzbiór JavaScript, który kompiluje się do czystego JavaScript. Został stworzony przez Microsoft i jest coraz bardziej popularny w społeczności programistów. Główne zalety TypeScript: 1. Statyczne typowanie - TypeScript dodaje opcjonalne typy statyczne do JavaScript, co pomaga wychwytywać błędy na etapie kompilacji, zanim kod zostanie uruchomiony. 2. Lepsze narzędzia - dzięki typom, edytory kodu mogą oferować lepsze autouzupełnianie, refaktoryzację i nawigację po kodzie. 3. Zgodność z JavaScript - każdy poprawny kod JavaScript jest również poprawnym kodem TypeScript. Możesz stopniowo migrować projekt z JS do TS. 4. Interfejsy i typy - TypeScript pozwala definiować interfejsy i typy niestandardowe, co ułatwia modelowanie struktur danych i API. 5. Klasy i dziedziczenie - TypeScript wspiera programowanie obiektowe z klasami, interfejsami i modyfikatorami dostępu (public, private, protected). 6. Generyki - pozwalają tworzyć komponenty wielokrotnego użytku, które mogą działać z różnymi typami danych zachowując bezpieczeństwo typów. 7. Enum - TypeScript dodaje enumy, które pozwalają definiować zestaw nazwanych stałych. TypeScript jest szczególnie przydatny w dużych projektach, gdzie bezpieczeństwo typów i łatwość refaktoryzacji są kluczowe. Wiele popularnych frameworków i bibliotek, takich jak Angular, Vue 3 czy React (z oficjalnym wsparciem), ma wbudowane wsparcie dla TypeScript."
-          - generic [ref=e27]:
-            - paragraph [ref=e28]: Wprowadź tekst o długości 1000-10,000 znaków
-            - paragraph [ref=e29]: 0 / 10,000
-        - generic [ref=e30]:
-          - button "Generuj fiszki" [disabled]
-  - generic [ref=e33]:
-    - button "Menu" [ref=e34]:
-      - img [ref=e36]
-      - generic: Menu
-    - button "Inspect" [ref=e40]:
-      - img [ref=e42]
-      - generic: Inspect
-    - button "Audit" [ref=e44]:
-      - img [ref=e46]
-      - generic: Audit
-    - button "Settings" [ref=e49]:
-      - img [ref=e51]
-      - generic: Settings
+    - banner [ref=e3]:
+        - generic [ref=e4]:
+            - link "10x Cards" [ref=e6] [cursor=pointer]:
+                - /url: /generate
+            - generic [ref=e7]:
+                - button "Przełącz na tryb ciemny" [ref=e8]:
+                    - img
+                - button "Avatar użytkownika user1@gmail.com" [ref=e10]:
+                    - generic "Avatar użytkownika" [ref=e11]:
+                        - generic [ref=e12]: U
+                    - generic [ref=e13]: user1@gmail.com
+                    - img [ref=e14]
+    - main [ref=e16]:
+        - generic [ref=e19]:
+            - generic [ref=e20]:
+                - heading "Wygeneruj fiszki z tekstu" [level=2] [ref=e21]
+                - generic [ref=e22]: Wklej tekst (1000-10000 znaków), a AI wygeneruje dla Ciebie propozycje fiszek do nauki
+            - generic [ref=e23]:
+                - generic [ref=e24]:
+                    - generic [ref=e25]: Wklej tekst źródłowy
+                    - textbox "Wklej tekst źródłowy" [active] [ref=e26]:
+                        - /placeholder: Wklej tutaj tekst, z którego chcesz wygenerować fiszki (minimum 1000 znaków)...
+                        - text: "TypeScript to typowany nadzbiór JavaScript, który kompiluje się do czystego JavaScript. Został stworzony przez Microsoft i jest coraz bardziej popularny w społeczności programistów. Główne zalety TypeScript: 1. Statyczne typowanie - TypeScript dodaje opcjonalne typy statyczne do JavaScript, co pomaga wychwytywać błędy na etapie kompilacji, zanim kod zostanie uruchomiony. 2. Lepsze narzędzia - dzięki typom, edytory kodu mogą oferować lepsze autouzupełnianie, refaktoryzację i nawigację po kodzie. 3. Zgodność z JavaScript - każdy poprawny kod JavaScript jest również poprawnym kodem TypeScript. Możesz stopniowo migrować projekt z JS do TS. 4. Interfejsy i typy - TypeScript pozwala definiować interfejsy i typy niestandardowe, co ułatwia modelowanie struktur danych i API. 5. Klasy i dziedziczenie - TypeScript wspiera programowanie obiektowe z klasami, interfejsami i modyfikatorami dostępu (public, private, protected). 6. Generyki - pozwalają tworzyć komponenty wielokrotnego użytku, które mogą działać z różnymi typami danych zachowując bezpieczeństwo typów. 7. Enum - TypeScript dodaje enumy, które pozwalają definiować zestaw nazwanych stałych. TypeScript jest szczególnie przydatny w dużych projektach, gdzie bezpieczeństwo typów i łatwość refaktoryzacji są kluczowe. Wiele popularnych frameworków i bibliotek, takich jak Angular, Vue 3 czy React (z oficjalnym wsparciem), ma wbudowane wsparcie dla TypeScript."
+                    - generic [ref=e27]:
+                        - paragraph [ref=e28]: Wprowadź tekst o długości 1000-10,000 znaków
+                        - paragraph [ref=e29]: 0 / 10,000
+                - generic [ref=e30]:
+                    - button "Generuj fiszki" [disabled]
+    - generic [ref=e33]:
+        - button "Menu" [ref=e34]:
+            - img [ref=e36]
+            - generic: Menu
+        - button "Inspect" [ref=e40]:
+            - img [ref=e42]
+            - generic: Inspect
+        - button "Audit" [ref=e44]:
+            - img [ref=e46]
+            - generic: Audit
+        - button "Settings" [ref=e49]:
+            - img [ref=e51]
+            - generic: Settings
 ```

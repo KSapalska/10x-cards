@@ -9,6 +9,7 @@ Badges: Node v22.14.0 • Astro v5 • React v19 • Tailwind v4
 10x-cards is a web application for creating and studying flashcards. The MVP focuses on helping users rapidly produce high‑quality cards by sending pasted text to an LLM (via API) that proposes Q/A pairs. Users can accept, edit, or discard suggestions, manage their own private card sets, and review them with a spaced‑repetition algorithm. The system stores user and card data securely and complies with GDPR, including the right to access and delete data.
 
 Table of contents
+
 - [3. Tech stack](#3-tech-stack)
 - [4. Getting started locally](#4-getting-started-locally)
 - [5. Available scripts](#5-available-scripts)
@@ -23,7 +24,6 @@ Table of contents
   - React 19 (https://react.dev/) (interactive components where needed)
   - TypeScript 5(https://www.typescriptlang.org/)
   - Tailwind CSS 4 (https://tailwindcss.com/)
-  
 - Backend
   - Supabase (PostgreSQL, Auth, SDK; RLS for per-user data isolation)
 - AI
@@ -33,11 +33,9 @@ Table of contents
   - DigitalOcean (container-based hosting)
 - Runtime
   - Node.js 22.14.0 (see .nvmrc)
-  
 - Testing
   - Unit & integration: Vitest (TypeScript, jsdom, coverage via c8)
   - End-to-end: Playwright (Chromium/Firefox/WebKit, traces/screenshots in CI)
-  
 - Suggested project layout
   - `src/` source code
   - `src/layouts/` Astro layouts
@@ -55,10 +53,12 @@ Table of contents
 ### 4. Getting started locally
 
 Prerequisites
+
 - Node 22.14.0 (nvm recommended)
 - npm (comes with Node)
 
 Setup
+
 ```bash
 # 1) Use the correct Node version
 nvm use
@@ -71,6 +71,7 @@ cp .env.example .env.local  # if present; otherwise create .env.local
 ```
 
 Environment variables (example)
+
 ```bash
 # Supabase
 SUPABASE_URL="https://YOUR-PROJECT.supabase.co"
@@ -81,10 +82,12 @@ OPENROUTER_API_KEY="sk-or-..."
 ```
 
 Notes
+
 - Do NOT send the `OPENROUTER_API_KEY` from the browser. Route all LLM requests through a server endpoint (e.g., `src/pages/api/generate.ts`) or a Supabase Edge Function.
 - Use Zod to validate all API inputs and enforce per-user access via Supabase RLS.
 
 Run
+
 ```bash
 # Start dev server
 npm run dev
@@ -117,6 +120,7 @@ e2e:report Open Playwright HTML report
 ### 6. Project scope
 
 In scope (MVP)
+
 - Paste text and generate flashcard suggestions via LLM API
 - Review suggestions and accept/edit/reject
 - Manual card creation, editing, and deletion
@@ -127,6 +131,7 @@ In scope (MVP)
 - Data stored with scalability and security in mind (Supabase + RLS)
 
 Out of scope (MVP)
+
 - Custom/advanced repetition algorithm (use an existing library)
 - Gamification
 - Mobile apps (web only)
@@ -139,6 +144,7 @@ Out of scope (MVP)
 ### 7. Project status
 
 MVP in active development. Success metrics include:
+
 - ≥ 75% of AI-generated cards accepted by users
 - ≥ 75% of newly added cards created via AI suggestions
 - Tracking of generated vs accepted counts for quality insights
@@ -146,4 +152,3 @@ MVP in active development. Success metrics include:
 ### 8. License
 
 MIT.
-

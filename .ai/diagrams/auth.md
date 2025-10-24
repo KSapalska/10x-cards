@@ -3,6 +3,7 @@
 ## Przegląd
 
 Diagram przedstawia przepływ autentykacji w aplikacji 10x-cards, obejmujący:
+
 - Ochronę tras przez middleware
 - Rejestrację i logowanie użytkowników
 - Generowanie fiszek z autentykacją
@@ -134,40 +135,47 @@ end
 ## Kluczowe Przepływy
 
 ### 1. Ochrona Tras (Middleware)
+
 - Każde żądanie strony chronionej przechodzi przez middleware
 - Middleware weryfikuje sesję z cookie w Supabase Auth
 - Brak lub wygaśnięta sesja → redirect do `/auth/login`
 
 ### 2. Rejestracja z Auto-Logowaniem
+
 - Walidacja danych wejściowych (Zod schema)
 - Utworzenie konta w Supabase Auth
 - Automatyczne logowanie po rejestracji
 - Ustawienie secure cookie z sesją
 
 ### 3. Logowanie
+
 - Walidacja email i hasła
 - Opcja "Zapamiętaj mnie" (cookie na 30 dni)
 - Neutralne komunikaty błędów (bezpieczeństwo)
 - Przekierowanie do `/generate` po sukcesie
 
 ### 4. Generowanie i Zapisywanie Fiszek
+
 - Wymaga autentykacji (sprawdzenie `user_id` z `context.locals`)
 - Walidacja tekstu źródłowego (1000-10000 znaków)
 - Generowanie propozycji przez OpenRouter API
 - Zapis z `user_id` dla izolacji danych użytkownika
 
 ### 5. Wylogowanie
+
 - Anulowanie sesji w Supabase Auth
 - Czyszczenie cookie
 - Przekierowanie do strony logowania
 
 ### 6. Reset Hasła
+
 - Żądanie linku resetowania (nie ujawnia czy email istnieje)
 - Email z tokenem resetowania
 - Walidacja nowego hasła (min 8 znaków, wymagania siły)
 - Weryfikacja tokenu przed zmianą hasła
 
 ### 7. Odświeżanie Tokenu
+
 - Automatyczne odświeżanie przed wygaśnięciem
 - Wygaśnięty refresh token → wylogowanie
 
@@ -191,32 +199,38 @@ end
 ## Istniejące Komponenty w Codebase
 
 ### Middleware
+
 - `src/middleware/index.ts` - obecnie dodaje tylko Supabase client do context.locals
 - **Wymaga rozszerzenia**: dodanie logiki weryfikacji sesji i ochrony tras
 
 ### API Endpoints (istniejące)
+
 - `src/pages/api/generations.ts` - generowanie fiszek przez AI
 - `src/pages/api/flashcards.ts` - zapis fiszek do bazy
 - **Wymaga modyfikacji**: dodanie sprawdzania `user_id` z sesji
 
 ### Serwisy
+
 - `src/lib/generation.service.ts` - GenerationService z integracją OpenRouter
 - `src/lib/flashcard.service.ts` - FlashcardService do operacji na fiszkach
 - **Obecnie używają**: `DEFAULT_USER_ID` - wymaga zamiany na prawdziwe `user_id`
 
 ### Komponenty React
+
 - `src/components/FlashcardGenerationView.tsx` - główny widok generowania
 - `src/components/hooks/useGenerateFlashcards.ts` - hook do komunikacji z API
 - `src/components/FlashcardList.tsx` - lista propozycji fiszek
 - `src/components/BulkSaveButton.tsx` - zapis zaakceptowanych fiszek
 
 ### Database Client
+
 - `src/db/supabase.client.ts` - klient Supabase
 - `src/env.d.ts` - typy dla context.locals (wymaga rozszerzenia o session i user)
 
 ## Zgodność z Dokumentacją
 
 Diagram został utworzony zgodnie z:
+
 - `.ai/prd.md` - Dokument wymagań produktu (US-001, US-002, US-003, US-009)
 - `.ai/auth-spec.md` - Specyfikacja architektury modułu autentykacji
 - Istniejąca funkcjonalność generowania fiszek
@@ -225,6 +239,7 @@ Diagram został utworzony zgodnie z:
 ## Zmiany Wymagane w Codebase
 
 ### Nowe Pliki
+
 1. **Komponenty React**:
    - `src/components/LoginForm.tsx`
    - `src/components/RegisterForm.tsx`
@@ -250,10 +265,11 @@ Diagram został utworzony zgodnie z:
    - `src/lib/supabase.auth.ts`
 
 ### Modyfikacje Istniejących Plików
+
 1. **Middleware**: `src/middleware/index.ts` - dodanie logiki sesji i ochrony tras
 2. **Environment Types**: `src/env.d.ts` - dodanie `session` i `user` do `App.Locals`
 3. **Validation**: `src/lib/validation.ts` - rozszerzenie o schematy autentykacji
-4. **API Endpoints**: 
+4. **API Endpoints**:
    - `src/pages/api/generations.ts` - dodanie `user_id` z sesji
    - `src/pages/api/flashcards.ts` - dodanie `user_id` z sesji
 5. **Serwisy**:
@@ -262,6 +278,7 @@ Diagram został utworzony zgodnie z:
 6. **Database Client**: `src/db/supabase.client.ts` - usunięcie `DEFAULT_USER_ID`
 
 ### Migracje Bazy Danych
+
 1. Dodanie kolumny `user_id` do tabeli `generations`
 2. Dodanie kolumny `user_id` do tabeli `flashcards`
 3. Dodanie foreign key constraints do `auth.users(id)`

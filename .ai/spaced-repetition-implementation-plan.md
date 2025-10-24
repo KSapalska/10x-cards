@@ -88,8 +88,8 @@ Serwis będzie odpowiedzialny za całą logikę związaną z FSRS.
   3.  Wywołuje `fsrs.repeat(card, new Date())` aby przetworzyć ocenę.
   4.  Pobiera nowy, zaktualizowany stan fiszki z wyniku.
   5.  **W ramach transakcji bazodanowej:**
-      a.  Aktualizuje rekord w tabeli `flashcards` nowymi wartościami (`due`, `stability`, `state` etc.).
-      b.  Tworzy nowy wpis w tabeli `reviews` z informacjami o tej ocenie.
+      a. Aktualizuje rekord w tabeli `flashcards` nowymi wartościami (`due`, `stability`, `state` etc.).
+      b. Tworzy nowy wpis w tabeli `reviews` z informacjami o tej ocenie.
   6.  Zwraca zaktualizowaną fiszkę.
 
 ### 4.3. Nowe typy DTO (`src/types.ts`)

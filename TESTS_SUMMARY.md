@@ -13,9 +13,11 @@
 ## 🧪 Zestaw Testów
 
 ### 1. **src/lib/utils.test.ts** (18 testów)
+
 #### Testowana funkcja: `cn()`
 
 **Zakres testów:**
+
 - ✅ Podstawowa funkcjonalność (3 testy)
 - ✅ Klasy warunkowe (4 testy)
 - ✅ Rozwiązywanie konfliktów Tailwind (5 testów)
@@ -23,6 +25,7 @@
 - ✅ Edge cases (3 testy)
 
 **Kluczowe reguły biznesowe:**
+
 - Łączenie wielu klas CSS
 - Filtrowanie wartości `undefined`, `null`, `false`
 - Rozwiązywanie konfliktów klas Tailwind (późniejsza klasa wygrywa)
@@ -37,6 +40,7 @@
 **Zakres testów:**
 
 #### `validateFlashcard()` (27 testów)
+
 - ✅ Poprawne fiszki (4 testy)
 - ✅ Walidacja pustego przodu (4 testy)
 - ✅ Walidacja pustego tyłu (3 testy)
@@ -46,6 +50,7 @@
 - ✅ Edge cases ze znakami specjalnymi (4 testy)
 
 **Kluczowe reguły biznesowe:**
+
 - **Przód fiszki**: max 200 znaków, nie może być pusty (po trim)
 - **Tył fiszki**: max 500 znaków, nie może być pusty (po trim)
 - **Priorytet błędów**:
@@ -56,6 +61,7 @@
 - Obsługa Unicode/emoji (liczą się jako wiele znaków)
 
 #### `getCounterColorState()` (15 testów)
+
 - ✅ Stan domyślny (1 test)
 - ✅ Stan ostrzeżenia - za krótkie (3 testy)
 - ✅ Stan sukcesu - poprawny zakres (5 testów)
@@ -63,17 +69,20 @@
 - ✅ Warunki brzegowe (3 testy)
 
 **Kluczowe reguły biznesowe:**
+
 - **0 znaków**: `default` (szary)
 - **1-999 znaków**: `warning` (pomarańczowy)
 - **1000-10000 znaków**: `success` (zielony)
 - **10001+ znaków**: `error` (czerwony/destruktywny)
 
 #### `getCounterColorClass()` (12 testów)
+
 - ✅ Mapowanie klas CSS (4 testy)
 - ✅ Warunki brzegowe CSS (4 testy)
 - ✅ Poprawność klas Tailwind (4 testy)
 
 #### Testy stałych (7 testów)
+
 - ✅ FLASHCARD_LIMITS (3 testy)
 - ✅ TEXT_INPUT_LIMITS (4 testy)
 
@@ -84,6 +93,7 @@
 #### Testowany hook: `useGenerateFlashcards()`
 
 **Zakres testów:**
+
 - ✅ Stan początkowy (1 test)
 - ✅ Walidacja - warunki brzegowe (4 testy)
 - ✅ Pomyślne generowanie (4 testy)
@@ -93,6 +103,7 @@
 - ✅ Edge cases (2 testy)
 
 **Kluczowe reguły biznesowe:**
+
 - **Walidacja długości tekstu**:
   - Min: 1000 znaków
   - Max: 10000 znaków
@@ -138,12 +149,12 @@
 FLASHCARD_LIMITS = {
   FRONT_MAX_LENGTH: 200,
   BACK_MAX_LENGTH: 500,
-}
+};
 
 TEXT_INPUT_LIMITS = {
   MIN_LENGTH: 1000,
   MAX_LENGTH: 10000,
-}
+};
 ```
 
 ---
@@ -151,21 +162,25 @@ TEXT_INPUT_LIMITS = {
 ## 🎯 Korzyści
 
 ### 1. **Testowanie Reguł Biznesowych**
+
 - ✅ Wszystkie limity znaków są przetestowane
 - ✅ Warunki brzegowe (999, 1000, 10000, 10001) są pokryte
 - ✅ Priorytet błędów jest zweryfikowany
 
 ### 2. **Bezpieczeństwo Refaktoryzacji**
+
 - ✅ Logika wyekstrahowana z komponentów
 - ✅ DRY - brak duplikacji stałych (200, 500, 1000, 10000)
 - ✅ Łatwa zmiana limitów w jednym miejscu
 
 ### 3. **Dokumentacja Przez Testy**
+
 - Testy pokazują dokładnie jak funkcje działają
 - Nazwy testów opisują expected behavior
 - Edge cases są udokumentowane
 
 ### 4. **Wykrywanie Regresji**
+
 - Zmiana logiki walidacji → test failuje ❌
 - Zmiana limitów bez aktualizacji stałych → test failuje ❌
 - Błędy w transformacji danych → test failuje ❌
@@ -190,16 +205,19 @@ npm run test:coverage
 ## 📝 Uwagi Techniczne
 
 ### Testing Library React 19
+
 - Wszystkie testy używają `@testing-library/react` v16
 - `renderHook` z `waitFor` dla async updates
 - Warnings o `act(...)` są OK - testy działają poprawnie
 
 ### Vitest Configuration
+
 - Environment: `jsdom`
 - Coverage provider: `v8`
 - Setup file: `vitest.setup.ts`
 
 ### Mocking
+
 - `global.fetch` jest mockowany w testach hooka
 - Używamy `vi.fn()` i `vi.clearAllMocks()`
 - Każdy test ma czysty stan (beforeEach)
@@ -223,4 +241,3 @@ npm run test:coverage
 **Autor testów**: AI Assistant  
 **Framework**: Vitest + Testing Library React  
 **Status**: ✅ PRODUCTION READY
-

@@ -132,11 +132,7 @@ export const PUT: APIRoute = async ({ params, request, locals }) => {
     const flashcardService = new FlashcardService(locals.supabase);
 
     // Update flashcard
-    const updatedFlashcard = await flashcardService.updateFlashcard(
-      flashcardId,
-      locals.user.id,
-      validationResult.data
-    );
+    const updatedFlashcard = await flashcardService.updateFlashcard(flashcardId, locals.user.id, validationResult.data);
 
     return new Response(JSON.stringify(updatedFlashcard), {
       status: 200,
@@ -256,4 +252,3 @@ export const DELETE: APIRoute = async ({ params, locals }) => {
     );
   }
 };
-

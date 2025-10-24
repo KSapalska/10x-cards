@@ -243,7 +243,7 @@ test.describe("Flashcard Management (CRUD Operations)", () => {
     await page.click('button:has-text("Zapisz zaakceptowane")');
 
     // Wait for success message
-    await page.waitForSelector('text=Fiszki zostały pomyślnie zapisane', { timeout: 10000 });
+    await page.waitForSelector("text=Fiszki zostały pomyślnie zapisane", { timeout: 10000 });
 
     // Get the list of flashcards to find the one with ai-full source
     const listResponse = await request.get("/api/flashcards?source=ai-full&limit=1");
@@ -441,4 +441,3 @@ test.describe("Flashcard Management (CRUD Operations)", () => {
     expect(verifyResponse.status()).toBe(404);
   });
 });
-

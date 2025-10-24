@@ -134,4 +134,3 @@ export function FlashcardCard({ flashcard, onEdit, onDelete }: FlashcardCardProp
     </Card>
   );
 }
-

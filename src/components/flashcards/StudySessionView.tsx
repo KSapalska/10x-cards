@@ -108,34 +108,30 @@ const StudySessionView = () => {
       </Card>
 
       {isFlipped ? (
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <Button
             variant="destructive"
+            className="bg-red-500 hover:bg-red-600 text-white"
             onClick={() => handleRate(1)}
             disabled={isSubmitting}
           >
-            Od nowa
+            Jeszcze raz
           </Button>
           <Button
             variant="secondary"
-            onClick={() => handleRate(2)}
-            disabled={isSubmitting}
-          >
-            Trudne
-          </Button>
-          <Button
-            variant="default"
+            className="bg-orange-400 hover:bg-orange-500 text-white"
             onClick={() => handleRate(3)}
             disabled={isSubmitting}
           >
-            Dobre
+            Jakoś ogarniam
           </Button>
           <Button
-            variant="outline"
+            variant="default"
+            className="bg-green-500 hover:bg-green-600 text-white"
             onClick={() => handleRate(4)}
             disabled={isSubmitting}
           >
-            Łatwe
+            Umiem
           </Button>
         </div>
       ) : (

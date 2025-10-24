@@ -6,7 +6,7 @@ test.describe("Flashcard Generation Flow", () => {
   test.beforeEach(async ({ page, context }) => {
     // Clear cookies and storage before each test
     await context.clearCookies();
-    
+
     // Login before each test
     const loginPage = new LoginPage(page);
     await loginPage.goto();

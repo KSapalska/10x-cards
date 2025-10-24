@@ -15,11 +15,13 @@ Rozwiązanie integruje **Supabase Auth** z frameworkiem **Astro** oraz komponent
 Aplikacja będzie operować dwoma głównymi stanami użytkownika:
 
 #### Stan 1: Użytkownik anonimowy
+
 - Dostęp tylko do publicznych stron: logowania, rejestracji, resetu hasła
 - Brak dostępu do stron chroniony: `/generate`, `/my-flashcards`
 - Automatyczne przekierowanie na `/auth/login` przy próbie dostępu do tras chronionych
 
 #### Stan 2: Użytkownik zalogowany
+
 - Pełny dostęp do funkcjonalności aplikacji
 - Sesja przechowywana w secure cookie
 - Token JWT dostępny w `context.locals` dla walidacji na serwerze
@@ -28,6 +30,7 @@ Aplikacja będzie operować dwoma głównymi stanami użytkownika:
 ### 1.2 Struktura tras (routing)
 
 #### Nowe strony autentykacji:
+
 - `GET /auth/login` – Strona logowania
 - `GET /auth/register` – Strona rejestracji
 - `GET /auth/forgot-password` – Strona początkowa resetu hasła
@@ -39,21 +42,25 @@ Aplikacja będzie operować dwoma głównymi stanami użytkownika:
 - `POST /api/auth/reset-password` – Endpoint resetowania hasła
 
 #### Istniejące strony (wymagające zmian):
+
 - `GET /` – Będzie pełnić rolę landing page lub przekierowania na `/generate` dla zalogowanych
 - `GET /generate` – Wymaga autentykacji (chroniona)
 - `GET /my-flashcards` – Nowa strona, wymaga autentykacji (chroniona)
 
 #### Strony bez zmian:
+
 - `GET /kitchen-sink` – Pozostaje bez zmian (demo komponentów)
 
 ### 1.3 Komponenty UI – warstwa frontend (React)
 
 #### 1.3.1 Formularz logowania (`LoginForm.tsx`)
+
 - Typ: Komponent React (client-side)
 - Lokalizacja: `src/components/LoginForm.tsx`
 - Odpowiedzialność: Obsługa logiki logowania po stronie klienta
 
 **Elementy formularza:**
+
 - Pole email (walidacja RFC 5322)
 - Pole hasła
 - Checkbox "Zapamiętaj mnie" (opcjonalnie)
@@ -62,17 +69,20 @@ Aplikacja będzie operować dwoma głównymi stanami użytkownika:
 - Link do resetowania hasła
 
 **Walidacja kliencka:**
+
 - Email: nie pusty, prawidłowy format
 - Hasło: nie puste, minimum 6 znaków
 - Wyświetlanie komunikatów błędów w real-time
 
 **Obsługa zdarzeń:**
+
 - Submit formularza → wysłanie POST do `/api/auth/login`
 - Obsługa błędów: nieprawidłowe dane logowania, błąd serwera
 - Po sukcesie: redirect do `/generate` z opóźnieniem dla UX
 - Loader/spinner podczas wysyłania
 
 **Komunikaty błędów:**
+
 - "Adres email jest wymagany"
 - "Hasło jest wymagane"
 - "Nieprawidłowe dane logowania"
@@ -80,11 +90,13 @@ Aplikacja będzie operować dwoma głównymi stanami użytkownika:
 - "Błąd serwera – spróbuj ponownie"
 
 #### 1.3.2 Formularz rejestracji (`RegisterForm.tsx`)
+
 - Typ: Komponent React (client-side)
 - Lokalizacja: `src/components/RegisterForm.tsx`
 - Odpowiedzialność: Obsługa logiki rejestracji po stronie klienta
 
 **Elementy formularza:**
+
 - Pole email (walidacja RFC 5322)
 - Pole hasła (z wymogami siły hasła)
 - Pole potwierdzenia hasła
@@ -93,18 +105,21 @@ Aplikacja będzie operować dwoma głównymi stanami użytkownika:
 - Link do logowania
 
 **Walidacja kliencka:**
+
 - Email: nie pusty, prawidłowy format, kontrola dostępności
 - Hasło: minimum 8 znaków, conajmniej 1 wielka litera, 1 cyfra, 1 znak specjalny
 - Potwierdzenie: musi być identyczne z hasłem
 - Wyświetlanie rzeczywistego feedbacku dotyczącego siły hasła
 
 **Obsługa zdarzeń:**
+
 - Submit formularza → wysłanie POST do `/api/auth/register`
 - Obsługa błędów: email już istnieje, słabe hasło, błąd serwera
 - Po sukcesie: automatyczne logowanie i redirect do `/generate`
 - Loader/spinner podczas wysyłania
 
 **Komunikaty błędów:**
+
 - "Adres email jest wymagany"
 - "Hasło jest wymagane"
 - "Hasła nie są identyczne"
@@ -113,49 +128,59 @@ Aplikacja będzie operować dwoma głównymi stanami użytkownika:
 - "Błąd serwera – spróbuj ponownie"
 
 #### 1.3.3 Formularz zapomniania hasła (`ForgotPasswordForm.tsx`)
+
 - Typ: Komponent React (client-side)
 - Lokalizacja: `src/components/ForgotPasswordForm.tsx`
 - Odpowiedzialność: Obsługa żądania resetu hasła
 
 **Elementy:**
+
 - Pole email
 - Przycisk wysłania linku resetowania
 - Link powrotu do logowania
 
 **Walidacja kliencka:**
+
 - Email: nie pusty, prawidłowy format
 
 **Obsługa zdarzeń:**
+
 - Submit → wysłanie POST do `/api/auth/forgot-password`
 - Po sukcesie: wyświetlenie komunikatu potwierdzenia
 - Komunikat: "Link resetowania hasła został wysłany na Twój adres email"
 
 **Komunikaty błędów:**
+
 - "Adres email nie istnieje"
 - "Błąd serwera – spróbuj ponownie"
 
 #### 1.3.4 Formularz resetowania hasła (`ResetPasswordForm.tsx`)
+
 - Typ: Komponent React (client-side)
 - Lokalizacja: `src/components/ResetPasswordForm.tsx`
 - Odpowiedzialność: Obsługa resetowania hasła za pomocą tokenu
 
 **Elementy:**
+
 - Pole nowego hasła
 - Pole potwierdzenia hasła
 - Przycisk resetowania
 - Informacja o tokenie w URL
 
 **Walidacja kliencka:**
+
 - Hasło: minimum 8 znaków, wymagania siły
 - Potwierdzenie: identyczne z hasłem
 
 **Obsługa zdarzeń:**
+
 - Weryfikacja tokenu z URL na załadowaniu strony
 - Submit → wysłanie POST do `/api/auth/reset-password` z tokenem
 - Po sukcesie: redirect do `/auth/login` z komunikatem
 - Komunikat: "Hasło zostało zmienione. Zaloguj się nowym hasłem"
 
 **Komunikaty błędów:**
+
 - "Token resetowania jest nieprawidłowy lub wygasł"
 - "Hasła nie są identyczne"
 - "Błąd serwera – spróbuj ponownie"
@@ -163,11 +188,13 @@ Aplikacja będzie operować dwoma głównymi stanami użytkownika:
 #### 1.3.5 Komponenty wspólne
 
 **NavBar / Header (`AuthHeader.tsx`)**
+
 - Typ: Komponent React lub Astro
 - Lokalizacja: `src/components/AuthHeader.tsx`
 - Odpowiedzialność: Nawigacja i informacje o zalogowanym użytkowniku
 
 **Elementy dla zalogowanych:**
+
 - Wyświetlanie emailu użytkownika
 - Avatar z inicjałami
 - Menu dropdown z opcjami:
@@ -177,11 +204,13 @@ Aplikacja będzie operować dwoma głównymi stanami użytkownika:
 - Toggle motywu (istniejący komponent `ThemeToggle`)
 
 **Elementy dla anonimowych:**
+
 - Przycisk "Zaloguj się"
 - Przycisk "Rejestracja"
 - Toggle motywu
 
 **Komponenty błędów (`ErrorNotification.tsx`)**
+
 - Już istnieje w projekcie
 - Będzie wykorzystywany do wyświetlania błędów autentykacji
 - Komunikaty będą dostarczane z formularzy
@@ -189,6 +218,7 @@ Aplikacja będzie operować dwoma głównymi stanami użytkownika:
 ### 1.4 Strony Astro – warstwa layout i routing
 
 #### 1.4.1 Layout aplikacji (`Layout.astro`)
+
 - Modyfikacja istniejącego pliku
 - Dodanie warunkowego renderowania nawigacji w zależności od stanu autentykacji
 - Uwzględnienie informacji o sesji z `context.locals`
@@ -205,6 +235,7 @@ Pseudo-struktura zmian:
 ```
 
 #### 1.4.2 Strona logowania (`src/pages/auth/login.astro`)
+
 - Nowa strona
 - Struktura:
   - Layout (bez pełnego headera, minimalistyczne)
@@ -214,6 +245,7 @@ Pseudo-struktura zmian:
 - Redirect automatyczny na `/generate` dla zalogowanych użytkowników
 
 #### 1.4.3 Strona rejestracji (`src/pages/auth/register.astro`)
+
 - Nowa strona
 - Struktura:
   - Layout (bez pełnego headera, minimalistyczne)
@@ -222,12 +254,14 @@ Pseudo-struktura zmian:
 - Redirect automatyczny na `/generate` dla zalogowanych użytkowników
 
 #### 1.4.4 Strona resetu hasła (`src/pages/auth/forgot-password.astro`)
+
 - Nowa strona
 - Struktura:
   - Formularz ForgotPasswordForm (React, client:load)
   - Link powrotu do logowania
 
 #### 1.4.5 Strona resetowania hasła (`src/pages/auth/reset-password.astro`)
+
 - Nowa strona
 - Token pobierany z parametru URL: `/auth/reset-password?token=xxx`
 - Struktura:
@@ -235,6 +269,7 @@ Pseudo-struktura zmian:
   - Obsługa przypadku wygaśniętego tokenu
 
 #### 1.4.6 Chronione strony
+
 - `src/pages/generate.astro` – zmiana (dodanie sprawdzenia sesji)
 - Nowa strona: `src/pages/my-flashcards.astro` (przyszłościowo)
 
@@ -243,6 +278,7 @@ Pseudo-struktura zmian:
 Modyfikacja istniejącego middleware'u:
 
 **Odpowiedzialności:**
+
 - Wczytanie sesji z Supabase Auth
 - Umieszczenie informacji o sesji w `context.locals.session`
 - Umieszczenie Supabase client w `context.locals.supabase` (istniejące)
@@ -250,8 +286,9 @@ Modyfikacja istniejącego middleware'u:
 - Sprawdzenie świeżości tokenu JWT i refresh jeśli potrzebny
 
 **Zachowanie middleware'u:**
+
 - Dla publicznych tras (`/`, `/auth/*`): brak dodatkowej logiki
-- Dla chronionych tras (`/generate`): 
+- Dla chronionych tras (`/generate`):
   - Sprawdzenie sesji
   - Jeśli brak sesji: redirect do `/auth/login` z `returnTo` query param
   - Jeśli istnieje sesja: kontynuacja
@@ -264,6 +301,7 @@ Modyfikacja istniejącego middleware'u:
 ### 2.1 Endpointy API autentykacji
 
 #### 2.1.1 POST `/api/auth/register`
+
 - Odpowiedzialność: Rejestracja nowego użytkownika
 - Request body (Zod schema):
   ```
@@ -286,6 +324,7 @@ Modyfikacja istniejącego middleware'u:
   10. Return tokenu sesji
 
 - Response (sukces 201):
+
   ```
   {
     session: {
@@ -305,6 +344,7 @@ Modyfikacja istniejącego middleware'u:
   - 500: Server error
 
 #### 2.1.2 POST `/api/auth/login`
+
 - Odpowiedzialność: Logowanie użytkownika
 - Request body (Zod schema):
   ```
@@ -324,6 +364,7 @@ Modyfikacja istniejącego middleware'u:
   7. Return tokenu sesji
 
 - Response (sukces 200):
+
   ```
   {
     session: {
@@ -343,6 +384,7 @@ Modyfikacja istniejącego middleware'u:
   - 500: Server error
 
 #### 2.1.3 POST `/api/auth/logout`
+
 - Odpowiedzialność: Wylogowanie użytkownika
 - Request body: empty lub zawiera sesję
 - Logika:
@@ -359,6 +401,7 @@ Modyfikacja istniejącego middleware'u:
   ```
 
 #### 2.1.4 POST `/api/auth/forgot-password`
+
 - Odpowiedzialność: Wysłanie linku resetowania hasła
 - Request body:
   ```
@@ -382,6 +425,7 @@ Modyfikacja istniejącego middleware'u:
   ```
 
 #### 2.1.5 POST `/api/auth/reset-password`
+
 - Odpowiedzialność: Resetowanie hasła za pomocą tokenu
 - Request body:
   ```
@@ -400,6 +444,7 @@ Modyfikacja istniejącego middleware'u:
   6. Return 200 OK
 
 - Response (sukces 200):
+
   ```
   {
     success: true
@@ -416,6 +461,7 @@ Modyfikacja istniejącego middleware'u:
 Implementacja w pliku `src/lib/validation.ts` (rozszerzenie istniejącego):
 
 **Schematy Zod:**
+
 - `emailSchema`: RFC 5322 format
 - `passwordSchema`: minimum 8 znaków, wymogi siły (uppercase, number, special char)
 - `registerSchema`: email, password, confirmPassword
@@ -428,6 +474,7 @@ Implementacja w pliku `src/lib/validation.ts` (rozszerzenie istniejącego):
 Nowy serwis do obsługi logiki autentykacji:
 
 **Metody:**
+
 - `register(email, password): Promise<AuthResponse>`
 - `login(email, password): Promise<AuthResponse>`
 - `logout(session): Promise<void>`
@@ -440,6 +487,7 @@ Nowy serwis do obsługi logiki autentykacji:
 ### 2.4 Obsługa błędów
 
 **Hierarchia błędów:**
+
 - `AuthenticationError`: Nieprawidłowe dane logowania
 - `AuthorizationError`: Brak uprawnień
 - `TokenExpiredError`: Token wygasł
@@ -447,22 +495,25 @@ Nowy serwis do obsługi logiki autentykacji:
 - `ServerError`: Błąd po stronie serwera
 
 **Logowanie:**
+
 - Wszystkie błędy krytyczne logowane w konsoli serwera
 - Komunikaty dla użytkownika przetłumaczone na polski, ogólnikowe (bez ujawniania szczegółów technicznych)
 
 ### 2.5 Obsługa ciasteczek (Cookies)
 
 **Cookie `session`:**
+
 - Secure: true
 - HttpOnly: true
 - SameSite: Strict
 - Path: /
 - Domain: automatyczne
-- Expires: 
+- Expires:
   - Bez "remember me": session (brak expiry)
   - Z "remember me": 30 dni
 
 **Ustawienie w kodzie Astro:**
+
 ```
 Astro.cookies.set('session', sessionToken, {
   httpOnly: true,
@@ -488,6 +539,7 @@ Astro.cookies.set('session', sessionToken, {
 **Provider:** Email/Password (built-in)
 
 **Ustawienia (w konsoli Supabase):**
+
 - Enable Email Provider: true
 - Email Templates: (Standard, personalizacja przyszłościowa)
 - Auth Redirect URLs:
@@ -498,10 +550,12 @@ Astro.cookies.set('session', sessionToken, {
 ### 3.2 Integracja z Astro
 
 **Inicjalizacja klienta Supabase:**
+
 - Rozszerzenie istniejącego pliku `src/db/supabase.client.ts`
 - Export dodatkowych funkcji autentykacji
 
 **Nowy plik:** `src/lib/supabase.auth.ts`
+
 - Wrapper funkcji Supabase Auth dla łatwości użytku
 - Obsługa sesji i tokenów
 - Synchronizacja z Supabase Auth state
@@ -509,15 +563,18 @@ Astro.cookies.set('session', sessionToken, {
 ### 3.3 Zarządzanie sesją
 
 **Session storage:**
+
 - Sesja przechowywana w secure HttpOnly cookie
 - Dodatkowo: localStorage dla informacji o zalogowanym użytkowniku (email, avatar placeholder)
 
 **Aktualizacja sesji:**
+
 - Automatyczne odświeżanie tokenu przed wygaśnięciem
 - Middleware sprawdza świeżość tokenu przy każdym requestzie
 - Jeśli refresh token wygasł: logout automatycznie
 
 **Logout:**
+
 - Usunięcie cookie
 - Czyszczenie localStorage
 - Redirect na `/auth/login`
@@ -525,6 +582,7 @@ Astro.cookies.set('session', sessionToken, {
 ### 3.4 Bezpieczeństwo
 
 **Ogólne zasady:**
+
 - Brak przechowywania hasła na kliencie
 - Brak ujawniania detali błędów autentykacji (np. "email nie istnieje")
 - Komunikaty błędów ogólne ("Nieprawidłowe dane logowania")
@@ -532,6 +590,7 @@ Astro.cookies.set('session', sessionToken, {
 - JWT token w Supabase: RS256 algorithm (default)
 
 **Ochrona przed atakami:**
+
 - CSRF: automatycznie przez Supabase
 - XSS: HttpOnly cookies, sanitization komunikatów
 - Brute force: Rate limiting na endpunktach
@@ -540,6 +599,7 @@ Astro.cookies.set('session', sessionToken, {
 ### 3.5 Tabela użytkowników (przyszłościowo)
 
 **Przyszła tabela `users`:**
+
 ```sql
 CREATE TABLE users (
   id UUID PRIMARY KEY (foreign key -> auth.users.id),
@@ -549,7 +609,8 @@ CREATE TABLE users (
 )
 ```
 
-**Użycie:** 
+**Użycie:**
+
 - Przechowywanie dodatkowych metadanych użytkownika
 - Dla MVP wystarczy Supabase auth.users
 
@@ -560,12 +621,14 @@ CREATE TABLE users (
 ### 4.1 Zmian w API do generowania fiszek
 
 **Istniejący endpoint:** `POST /api/generations`
+
 - Aktualnie: brak wymuszenia autentykacji
 - **Zmiana:** Dodanie sprawdzenia sesji w middleware
 - **Extrahowanie user_id z sesji:** `context.locals.user.id`
 - **Zapis user_id w tabeli `generations`**
 
 **Zmiana w strukturze danych:**
+
 - Kolumna `user_id` w tabeli `generations` (foreign key)
 - Kolumna `user_id` w tabeli `flashcards` (foreign key)
 
@@ -578,6 +641,7 @@ CREATE TABLE users (
 ### 4.3 Strona główna (`/`)
 
 **Logika:**
+
 - Jeśli zalogowany: redirect na `/generate`
 - Jeśli anonimowy: wyświetlenie landing page lub redirect na `/auth/login`
 - Można alternatywnie wyświetlić welcome screen dla anonimowych
@@ -621,7 +685,7 @@ CREATE TABLE users (
 3. Strona: załadowana
 4. Użytkownik: wkleję tekst, klika "Generuj"
 5. Request: POST `/api/generations` + tokenu w header (Bearer)
-6. Serwer: 
+6. Serwer:
    - Walidacja tokenu
    - Extrahowanie user_id
    - Wygenerowanie fiszek
@@ -714,16 +778,18 @@ src/
 ## 7. ZMIANY W SCHEMACIE BAZY DANYCH
 
 ### 7.1 Nowa kolumna w `generations`
+
 ```sql
 ALTER TABLE generations ADD COLUMN user_id UUID NOT NULL;
-ALTER TABLE generations ADD CONSTRAINT fk_generations_user 
+ALTER TABLE generations ADD CONSTRAINT fk_generations_user
   FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE;
 ```
 
 ### 7.2 Nowa kolumna w `flashcards`
+
 ```sql
 ALTER TABLE flashcards ADD COLUMN user_id UUID NOT NULL;
-ALTER TABLE flashcards ADD CONSTRAINT fk_flashcards_user 
+ALTER TABLE flashcards ADD CONSTRAINT fk_flashcards_user
   FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE;
 ```
 
@@ -732,21 +798,25 @@ ALTER TABLE flashcards ADD CONSTRAINT fk_flashcards_user
 ## 8. UWAGI IMPLEMENTACYJNE
 
 ### 8.1 Priorytety
+
 1. Faza 1 (MVP): Logowanie i Rejestracja
 2. Faza 2: Reset hasła
 3. Faza 3: Profil użytkownika, ustawienia
 
 ### 8.2 Testowanie
+
 - Unit testy dla serwisu autentykacji
 - Testy E2E dla całego flow logowania
 - Testowanie bezpieczeństwa (CSRF, XSS, SQL injection)
 
 ### 8.3 Dokumentacja użytkownika
+
 - Instrukcja logowania/rejestracji
 - Instrukcja resetu hasła
 - FAQ dotyczące bezpieczeństwa
 
 ### 8.4 Monitoring
+
 - Logowanie prób logowania
 - Logowanie błędów autentykacji
 - Monitoring brute force attacks

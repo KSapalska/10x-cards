@@ -52,14 +52,14 @@ export const GET: APIRoute = async ({ url, locals }) => {
   try {
     // Parse and validate query parameters
     const queryParams: Record<string, string | undefined> = {};
-    
+
     const page = url.searchParams.get("page");
     const limit = url.searchParams.get("limit");
     const sort = url.searchParams.get("sort");
     const order = url.searchParams.get("order");
     const source = url.searchParams.get("source");
     const generation_id = url.searchParams.get("generation_id");
-    
+
     if (page) queryParams.page = page;
     if (limit) queryParams.limit = limit;
     if (sort) queryParams.sort = sort;

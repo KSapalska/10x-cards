@@ -60,8 +60,8 @@ export function Pagination({ pagination, onPageChange }: PaginationProps) {
     <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
       {/* Info */}
       <div className="text-sm text-muted-foreground">
-        Wyświetlane <span className="font-medium">{startItem}</span> -{" "}
-        <span className="font-medium">{endItem}</span> z <span className="font-medium">{total}</span>
+        Wyświetlane <span className="font-medium">{startItem}</span> - <span className="font-medium">{endItem}</span> z{" "}
+        <span className="font-medium">{total}</span>
       </div>
 
       {/* Page numbers */}
@@ -139,4 +139,3 @@ export function Pagination({ pagination, onPageChange }: PaginationProps) {
     </div>
   );
 }
-

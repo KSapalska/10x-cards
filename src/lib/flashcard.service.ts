@@ -1,10 +1,4 @@
-import type {
-  FlashcardCreateDto,
-  FlashcardDto,
-  FlashcardsListResponseDto,
-  FlashcardUpdateDto,
-  Source,
-} from "../types";
+import type { FlashcardCreateDto, FlashcardDto, FlashcardsListResponseDto, FlashcardUpdateDto, Source } from "../types";
 import type { SupabaseClient } from "../db/supabase.client";
 
 export class FlashcardService {

@@ -1,6 +1,7 @@
 ---
 import "../styles/global.css";
 import { AuthHeader } from "../components/AuthHeader";
+import { HeaderNav } from "../components/HeaderNav";
 
 interface Props {
   title?: string;
@@ -42,7 +43,22 @@ const user = Astro.locals.user
     </script>
   </head>
   <body>
-    {showHeader && <AuthHeader user={user} client:load />}
+    {
+      showHeader && (
+        <header class="fixed top-0 left-0 right-0 z-50 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+          <div class="container mx-auto px-4 h-16 flex items-center justify-between">
+            <a
+              href={user ? "/generate" : "/"}
+              class="text-xl font-bold text-foreground hover:text-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded"
+            >
+              10x Cards
+            </a>
+            {user && <HeaderNav client:load />}
+            <AuthHeader user={user} client:load />
+          </div>
+        </header>
+      )
+    }
     <main class:list={[{ "pt-16": showHeader }]}>
       <slot />
     </main>

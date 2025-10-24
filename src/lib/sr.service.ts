@@ -44,11 +44,7 @@ export class SpacedRepetitionService {
    * @param rating - The user's rating for the flashcard (1-4).
    * @returns A promise that resolves to the updated flashcard.
    */
-  public async rateFlashcard(
-    userId: string,
-    flashcardId: number,
-    rating: Rating
-  ): Promise<Flashcard> {
+  public async rateFlashcard(userId: string, flashcardId: number, rating: Rating): Promise<Flashcard> {
     const { data: flashcard, error: fetchError } = await this.supabase
       .from("flashcards")
       .select("*")
@@ -69,8 +65,9 @@ export class SpacedRepetitionService {
     const stateAfter = newCardState.card.state;
 
     // Use a transaction to update the flashcard and insert the review
-    const { data: updatedFlashcard, error: transactionError } =
-      await this.supabase.rpc("rate_flashcard_and_log_review", {
+    const { data: updatedFlashcard, error: transactionError } = await this.supabase.rpc(
+      "rate_flashcard_and_log_review",
+      {
         p_flashcard_id: flashcardId,
         p_user_id: userId,
         p_rating: rating,
@@ -85,7 +82,8 @@ export class SpacedRepetitionService {
         p_lapses: newCardState.card.lapses,
         p_state: FSRS.State[newCardState.card.state],
         p_last_review: newCardState.card.last_review.toISOString(),
-      });
+      }
+    );
 
     if (transactionError) {
       console.error("Error in rate_flashcard_and_log_review RPC:", transactionError);

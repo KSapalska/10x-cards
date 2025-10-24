@@ -1,20 +1,23 @@
-/*
+/_
 Plan implementacji widoku "Moje fiszki"
-*/
+_/
 
 # Plan implementacji widoku "Moje fiszki"
 
 ## 1. Przegląd
+
 Widok "Moje fiszki" umożliwia użytkownikowi przeglądanie wszystkich zapisanych fiszek (zarówno ręcznie utworzonych jak i wygenerowanych przez AI), ich edycję, usuwanie oraz ręczne dodawanie nowych fiszek. Widok wspiera paginację, sortowanie i filtrowanie dla lepszej organizacji dużych zbiorów fiszek.
 
 **User Stories:** US-005 (edycja), US-006 (usuwanie), US-007 (ręczne tworzenie)
 
 ## 2. Routing widoku
+
 Widok powinien być dostępny pod ścieżką `/flashcards`.
 
 ## 3. Struktura komponentów
 
 ### Hierarchia
+
 ```
 FlashcardsView (główny kontener)
 ├── FlashcardsHeader
@@ -39,6 +42,7 @@ FlashcardsView (główny kontener)
 ## 4. Szczegóły komponentów
 
 ### 4.1. FlashcardsView
+
 - **Opis**: Główny komponent widoku zarządzający stanem całej strony i orkiestrujący pozostałe komponenty.
 - **Elementy**: Header, lista/grid fiszek, paginacja, modalne dialogi.
 - **Zarządzanie stanem**:
@@ -48,7 +52,7 @@ FlashcardsView (główny kontener)
   - Parametry filtrowania i sortowania (opcjonalne)
   - Stan modalów (dodawanie, edycja, usuwanie)
   - Aktualnie edytowana/usuwana fiszka
-- **Hooki**: 
+- **Hooki**:
   - `useFlashcards()` - custom hook do zarządzania listą fiszek
   - `useState` dla modalów
   - `useSearchParams` dla paginacji w URL (opcjonalne)
@@ -56,20 +60,22 @@ FlashcardsView (główny kontener)
 - **Propsy**: Brak (top-level component)
 
 ### 4.2. FlashcardsHeader
+
 - **Opis**: Nagłówek strony z tytułem i przyciskiem dodawania.
-- **Elementy**: 
+- **Elementy**:
   - Tytuł "Moje fiszki"
   - Licznik fiszek (np. "42 fiszki")
   - Przycisk "Dodaj fiszkę" (otwiera `AddFlashcardModal`)
   - FilterSortControls (opcjonalne w MVP)
-- **Obsługiwane zdarzenia**: 
+- **Obsługiwane zdarzenia**:
   - onClick przycisku "Dodaj fiszkę" → otwiera modal
 - **Typy**: Licznik jako `number`
-- **Propsy**: 
+- **Propsy**:
   - `totalCount: number`
   - `onAddClick: () => void`
 
 ### 4.3. FlashcardCard
+
 - **Opis**: Pojedyncza karta reprezentująca fiszkę w widoku listy/grid.
 - **Elementy**:
   - Przód fiszki (z ograniczeniem długości, np. 100 znaków + "...")
@@ -89,6 +95,7 @@ FlashcardsView (główny kontener)
   - `onDelete: (flashcard: FlashcardDto) => void`
 
 ### 4.4. FlashcardsGrid / FlashcardsList
+
 - **Opis**: Kontener wyświetlający wszystkie fiszki w formie grid lub listy.
 - **Elementy**: Kolekcja `FlashcardCard` + EmptyState jeśli brak fiszek
 - **Obsługiwane zdarzenia**: Przekazywanie callbacków do kart
@@ -101,11 +108,12 @@ FlashcardsView (główny kontener)
   - `onDelete: (flashcard: FlashcardDto) => void`
 
 ### 4.5. Pagination
+
 - **Opis**: Komponent paginacji umożliwiający nawigację między stronami.
 - **Elementy**:
   - Przyciski: Pierwsza, Poprzednia, [numery stron], Następna, Ostatnia
   - Informacja: "Strona 1 z 5" lub "1-10 z 42"
-- **Obsługiwane zdarzenia**: 
+- **Obsługiwane zdarzenia**:
   - onClick dla każdego przycisku → zmiana `page`
   - onChange limitu (opcjonalne dropdown 10/25/50/100)
 - **Warunki walidacji**: `page` >= 1 i <= totalPages
@@ -116,6 +124,7 @@ FlashcardsView (główny kontener)
   - `onLimitChange?: (limit: number) => void`
 
 ### 4.6. AddFlashcardModal
+
 - **Opis**: Modal do ręcznego dodawania nowej fiszki.
 - **Elementy**:
   - Dialog overlay
@@ -132,7 +141,7 @@ FlashcardsView (główny kontener)
   - Front: 1-200 znaków (po trim)
   - Back: 1-500 znaków (po trim)
   - Oba pola wymagane
-- **Typy**: 
+- **Typy**:
   - Input: lokalny state z `front`, `back`
   - Output: `FlashcardCreateDto` z `source: "manual"`, `generation_id: null`
 - **Propsy**:
@@ -141,6 +150,7 @@ FlashcardsView (główny kontener)
   - `onSuccess: (flashcard: FlashcardDto) => void`
 
 ### 4.7. EditFlashcardModal
+
 - **Opis**: Modal do edycji istniejącej fiszki.
 - **Elementy**: Identyczne jak `AddFlashcardModal`, ale z wypełnionymi wartościami
 - **Obsługiwane zdarzenia**:
@@ -151,7 +161,7 @@ FlashcardsView (główny kontener)
 - **Logika biznesowa**:
   - Jeśli `source === "ai-full"` → po edycji backend zmieni na `"ai-edited"`
   - Pokazać użytkownikowi informację o tym (opcjonalne)
-- **Typy**: 
+- **Typy**:
   - Input: `FlashcardDto` (istniejąca fiszka)
   - Update payload: `FlashcardUpdateDto`
   - Output: zaktualizowana `FlashcardDto`
@@ -162,6 +172,7 @@ FlashcardsView (główny kontener)
   - `onSuccess: (flashcard: FlashcardDto) => void`
 
 ### 4.8. DeleteConfirmationDialog
+
 - **Opis**: Dialog potwierdzenia usunięcia fiszki (zapobieganie przypadkowemu usunięciu).
 - **Elementy**:
   - Alert dialog
@@ -181,6 +192,7 @@ FlashcardsView (główny kontener)
   - `isDeleting: boolean` (loading state)
 
 ### 4.9. FilterSortControls (Opcjonalne w MVP)
+
 - **Opis**: Kontrolki filtrowania i sortowania listy fiszek.
 - **Elementy**:
   - Dropdown "Źródło": Wszystkie / AI (pełne) / AI (edytowane) / Ręczne
@@ -193,6 +205,7 @@ FlashcardsView (główny kontener)
   - `onChange: (filters) => void`
 
 ### 4.10. EmptyState
+
 - **Opis**: Wyświetlany gdy użytkownik nie ma jeszcze żadnych fiszek.
 - **Elementy**:
   - Ikona (np. pusty folder lub fiszka)
@@ -208,6 +221,7 @@ FlashcardsView (główny kontener)
   - `onGenerateClick: () => void`
 
 ### 4.11. SkeletonLoader
+
 - **Opis**: Wyświetlany podczas ładowania listy fiszek.
 - **Elementy**: Grid/lista skeleton cards (3-6 sztuk)
 - **Typy**: Stateless
@@ -216,17 +230,19 @@ FlashcardsView (główny kontener)
 ## 5. Typy
 
 ### Istniejące w `src/types.ts`:
+
 ```typescript
-FlashcardDto
-FlashcardsListResponseDto
-PaginationDto
-FlashcardCreateDto
-FlashcardUpdateDto
-FlashcardsCreateCommand
-Source
+FlashcardDto;
+FlashcardsListResponseDto;
+PaginationDto;
+FlashcardCreateDto;
+FlashcardUpdateDto;
+FlashcardsCreateCommand;
+Source;
 ```
 
 ### Nowe typy lokalne (w komponencie):
+
 ```typescript
 // Stan modalów
 interface ModalState {
@@ -239,8 +255,8 @@ interface ModalState {
 interface FlashcardsQueryParams {
   page: number;
   limit: number;
-  sort?: 'created_at' | 'updated_at' | 'front' | 'source';
-  order?: 'asc' | 'desc';
+  sort?: "created_at" | "updated_at" | "front" | "source";
+  order?: "asc" | "desc";
   source?: Source;
   generation_id?: number;
 }
@@ -249,6 +265,7 @@ interface FlashcardsQueryParams {
 ## 6. Zarządzanie stanem
 
 ### 6.1. Custom Hook: `useFlashcards()`
+
 Hook zarządzający listą fiszek i operacjami CRUD.
 
 ```typescript
@@ -258,8 +275,10 @@ function useFlashcards(params: FlashcardsQueryParams) {
   const [error, setError] = useState<string | null>(null);
 
   // Fetch list
-  const fetchFlashcards = async () => { /* GET /api/flashcards */ };
-  
+  const fetchFlashcards = async () => {
+    /* GET /api/flashcards */
+  };
+
   // Reload (po dodaniu/edycji/usunięciu)
   const refetch = () => fetchFlashcards();
 
@@ -272,6 +291,7 @@ function useFlashcards(params: FlashcardsQueryParams) {
 ```
 
 ### 6.2. Custom Hook: `useAddFlashcard()`
+
 ```typescript
 function useAddFlashcard() {
   const [isAdding, setIsAdding] = useState(false);
@@ -286,6 +306,7 @@ function useAddFlashcard() {
 ```
 
 ### 6.3. Custom Hook: `useEditFlashcard()`
+
 ```typescript
 function useEditFlashcard() {
   const [isEditing, setIsEditing] = useState(false);
@@ -300,6 +321,7 @@ function useEditFlashcard() {
 ```
 
 ### 6.4. Custom Hook: `useDeleteFlashcard()`
+
 ```typescript
 function useDeleteFlashcard() {
   const [isDeleting, setIsDeleting] = useState(false);
@@ -314,6 +336,7 @@ function useDeleteFlashcard() {
 ```
 
 ### 6.5. Stan lokalny w FlashcardsView
+
 ```typescript
 const [modals, setModals] = useState<ModalState>({
   add: false,
@@ -326,54 +349,61 @@ const [selectedFlashcard, setSelectedFlashcard] = useState<FlashcardDto | null>(
 const [queryParams, setQueryParams] = useState<FlashcardsQueryParams>({
   page: 1,
   limit: 10,
-  sort: 'created_at',
-  order: 'desc',
+  sort: "created_at",
+  order: "desc",
 });
 ```
 
 ## 7. Integracja API
 
 ### 7.1. GET /api/flashcards (lista)
+
 ```typescript
 const response = await fetch(`/api/flashcards?page=${page}&limit=${limit}&sort=${sort}&order=${order}`);
 const data: FlashcardsListResponseDto = await response.json();
 ```
 
 ### 7.2. POST /api/flashcards (dodanie ręczne)
+
 ```typescript
-const response = await fetch('/api/flashcards', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
+const response = await fetch("/api/flashcards", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
   body: JSON.stringify({
-    flashcards: [{
-      front: "Pytanie",
-      back: "Odpowiedź",
-      source: "manual",
-      generation_id: null
-    }]
-  })
+    flashcards: [
+      {
+        front: "Pytanie",
+        back: "Odpowiedź",
+        source: "manual",
+        generation_id: null,
+      },
+    ],
+  }),
 });
 ```
 
 ### 7.3. PUT /api/flashcards/[id] (edycja)
+
 ```typescript
 const response = await fetch(`/api/flashcards/${id}`, {
-  method: 'PUT',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ front: "...", back: "..." })
+  method: "PUT",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ front: "...", back: "..." }),
 });
 ```
 
 ### 7.4. DELETE /api/flashcards/[id] (usunięcie)
+
 ```typescript
 const response = await fetch(`/api/flashcards/${id}`, {
-  method: 'DELETE'
+  method: "DELETE",
 });
 ```
 
 ## 8. Interakcje użytkownika
 
 ### Scenariusz 1: Przeglądanie fiszek
+
 1. Użytkownik wchodzi na `/flashcards`
 2. Widzi skeleton loader podczas ładowania
 3. Lista fiszek się wyświetla (grid lub lista)
@@ -383,6 +413,7 @@ const response = await fetch(`/api/flashcards/${id}`, {
    - Opcjonalnie: filtrować po źródle, sortować
 
 ### Scenariusz 2: Dodawanie fiszki ręcznie (US-007)
+
 1. Użytkownik klika "Dodaj fiszkę"
 2. Otwiera się `AddFlashcardModal`
 3. Użytkownik wypełnia przód i tył (walidacja real-time)
@@ -394,6 +425,7 @@ const response = await fetch(`/api/flashcards/${id}`, {
    - Lista się odświeża (nowa fiszka na górze jeśli sort=created_at desc)
 
 ### Scenariusz 3: Edycja fiszki (US-005)
+
 1. Użytkownik klika "Edytuj" na karcie
 2. Otwiera się `EditFlashcardModal` z wypełnionymi wartościami
 3. Użytkownik modyfikuje tekst
@@ -406,6 +438,7 @@ const response = await fetch(`/api/flashcards/${id}`, {
    - Karta odświeża się z nowymi danymi
 
 ### Scenariusz 4: Usuwanie fiszki (US-006)
+
 1. Użytkownik klika "Usuń" na karcie
 2. Otwiera się `DeleteConfirmationDialog` z preview fiszki
 3. Użytkownik klika "Usuń" (lub "Anuluj")
@@ -419,7 +452,8 @@ const response = await fetch(`/api/flashcards/${id}`, {
 ## 9. Warunki i walidacja
 
 ### Frontend validation (real-time)
-- **Przód fiszki**: 
+
+- **Przód fiszki**:
   - Niepusty (po trim)
   - Max 200 znaków
   - Licznik: 0/200 (warning jeśli > 180)
@@ -429,22 +463,26 @@ const response = await fetch(`/api/flashcards/${id}`, {
   - Licznik: 0/500 (warning jeśli > 450)
 
 ### Backend validation
+
 - Identyczna walidacja po stronie API
 - Dodatkowa walidacja RLS (dostęp tylko do swoich fiszek)
 
 ## 10. Obsługa błędów
 
 ### Błędy API
+
 - **401 Unauthorized**: Przekierowanie do `/auth/login`
 - **404 Not Found**: Toast "Fiszka nie została znaleziona" + odświeżenie listy
 - **400 Bad Request**: Wyświetlenie błędów walidacji pod formularzem
 - **500 Server Error**: Toast "Wystąpił błąd. Spróbuj ponownie."
 
 ### Błędy sieci
+
 - Timeout: Toast "Brak połączenia. Sprawdź internet."
 - Retry mechanism (opcjonalny): Przycisk "Spróbuj ponownie"
 
 ### Optimistic UI (opcjonalne w MVP)
+
 - Przy usuwaniu: natychmiast ukryj kartę, rollback jeśli błąd
 - Przy edycji: natychmiast zaktualizuj UI, rollback jeśli błąd
 
@@ -462,14 +500,17 @@ const response = await fetch(`/api/flashcards/${id}`, {
 ## 12. Responsywność
 
 ### Desktop (>1024px)
+
 - Grid: 3 kolumny
 - Modalne formularze: max-width 600px, wyśrodkowane
 
 ### Tablet (768px - 1024px)
+
 - Grid: 2 kolumny
 - Modal: szerokość 90%
 
 ### Mobile (<768px)
+
 - Lista pionowa (nie grid)
 - Modal: full-width z padding
 - Przyciski stacked (nie obok siebie)
@@ -477,6 +518,7 @@ const response = await fetch(`/api/flashcards/${id}`, {
 ## 13. UI/UX usprawnienia
 
 ### Must-have (MVP)
+
 - ✅ Skeleton loader podczas ładowania
 - ✅ Empty state dla nowych użytkowników
 - ✅ Toast notifications dla operacji CRUD
@@ -485,6 +527,7 @@ const response = await fetch(`/api/flashcards/${id}`, {
 - ✅ Liczniki znaków w formularzach
 
 ### Nice-to-have (post-MVP)
+
 - 🔄 Optimistic UI updates
 - 🔄 Fade-out animation przy usuwaniu
 - 🔄 Flip animation na karcie (przód/tył)
@@ -495,53 +538,63 @@ const response = await fetch(`/api/flashcards/${id}`, {
 ## 14. Kroki implementacji
 
 ### Faza 1: Backend (z planu `flashcards-crud-endpoints-implementation-plan.md`)
+
 1. ✅ Rozszerzenie `FlashcardService`
 2. ✅ Implementacja GET, PUT, DELETE endpoints
 3. ✅ Walidacja i testy
 
 ### Faza 2: Podstawowa struktura (1-2 dni)
+
 1. Utworzenie strony `/flashcards.astro`
 2. Główny komponent `FlashcardsView.tsx`
 3. Custom hook `useFlashcards()` dla GET /api/flashcards
 4. Skeleton loader i empty state
 
 ### Faza 3: Lista fiszek (1 dzień)
+
 5. Komponent `FlashcardCard.tsx`
 6. Komponent `FlashcardsGrid.tsx`
 7. Badge dla źródła fiszki (ai-full/ai-edited/manual)
 8. Podstawowe style
 
 ### Faza 4: Paginacja (0.5 dnia)
+
 9. Komponent `Pagination.tsx`
 10. Integracja z `useFlashcards()`
 
 ### Faza 5: Dodawanie fiszki (1 dzień)
+
 11. Komponent `AddFlashcardModal.tsx`
 12. Formularz z walidacją
 13. Custom hook `useAddFlashcard()`
 14. Integracja POST /api/flashcards
 
 ### Faza 6: Edycja fiszki (1 dzień)
+
 15. Komponent `EditFlashcardModal.tsx`
 16. Custom hook `useEditFlashcard()`
 17. Integracja PUT /api/flashcards/[id]
 18. Obsługa zmiany source (ai-full → ai-edited)
 
 ### Faza 7: Usuwanie fiszki (0.5 dnia)
+
 19. Komponent `DeleteConfirmationDialog.tsx`
 20. Custom hook `useDeleteFlashcard()`
 21. Integracja DELETE /api/flashcards/[id]
 
 ### Faza 8: Toast notifications (0.5 dnia)
+
 22. Dodanie toast systemu (np. Sonner lub custom)
 23. Integracja we wszystkie operacje CRUD
 
 ### Faza 9: Filtrowanie i sortowanie (1 dzień - OPCJONALNE)
+
 24. Komponent `FilterSortControls.tsx`
 25. Rozszerzenie `useFlashcards()` o filters
 26. Synchronizacja z URL query params
 
 ### Faza 10: Testy i dopracowanie (1-2 dni)
+
 27. Testy jednostkowe dla hooków
 28. Testy E2E (Playwright):
     - Dodawanie fiszki
@@ -553,6 +606,7 @@ const response = await fetch(`/api/flashcards/${id}`, {
 31. Error handling i edge cases
 
 ### Faza 11: Integracja z nawigacją
+
 32. Dodanie linku "Moje fiszki" w `AuthHeader.tsx`
 33. Breadcrumbs (opcjonalne)
 34. Active state dla linku w nawigacji
@@ -587,6 +641,7 @@ src/
 ## 16. Checklist implementacji
 
 Frontend:
+
 - [ ] Strona `/flashcards.astro`
 - [ ] `FlashcardsView.tsx` (główny komponent)
 - [ ] Custom hooks (useFlashcards, useAddFlashcard, useEditFlashcard, useDeleteFlashcard)
@@ -605,6 +660,7 @@ Frontend:
 - [ ] Link w nawigacji (`AuthHeader.tsx`)
 
 Opcjonalne (post-MVP):
+
 - [ ] `FilterSortControls.tsx`
 - [ ] URL query params dla paginacji
 - [ ] Optimistic UI updates
@@ -616,6 +672,7 @@ Opcjonalne (post-MVP):
 ## 17. Przykład użycia (kod)
 
 ### flashcards.astro
+
 ```astro
 ---
 import Layout from "../layouts/Layout.astro";
@@ -634,6 +691,7 @@ if (!Astro.locals.session) {
 ```
 
 ### useFlashcards.ts (pseudo-kod)
+
 ```typescript
 export function useFlashcards(params: FlashcardsQueryParams) {
   const [data, setData] = useState<FlashcardsListResponseDto | null>(null);
@@ -643,27 +701,27 @@ export function useFlashcards(params: FlashcardsQueryParams) {
   const fetchFlashcards = async () => {
     setIsLoading(true);
     setError(null);
-    
+
     const queryString = new URLSearchParams({
       page: params.page.toString(),
       limit: params.limit.toString(),
-      sort: params.sort || 'created_at',
-      order: params.order || 'desc',
+      sort: params.sort || "created_at",
+      order: params.order || "desc",
       ...(params.source && { source: params.source }),
       ...(params.generation_id && { generation_id: params.generation_id.toString() }),
     }).toString();
 
     try {
       const response = await fetch(`/api/flashcards?${queryString}`);
-      
+
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}`);
       }
-      
+
       const data = await response.json();
       setData(data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Unknown error');
+      setError(err instanceof Error ? err.message : "Unknown error");
     } finally {
       setIsLoading(false);
     }
@@ -682,4 +740,3 @@ export function useFlashcards(params: FlashcardsQueryParams) {
 **Szacowany czas implementacji:** 5-7 dni roboczych (full-time)
 **Priorytet:** WYSOKI (core feature MVP)
 **Zależności:** Backend endpoints (GET, PUT, DELETE) muszą być gotowe
-

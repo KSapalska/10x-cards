@@ -37,7 +37,7 @@ flowchart TD
         REGISTER_PAGE["auth/register.astro"]
         FORGOT_PAGE["auth/forgot-password.astro"]
         RESET_PAGE["auth/reset-password.astro"]
-        
+
         LOGIN_PAGE -->|"Renderuje"| LOGIN_FORM["LoginForm.tsx"]
         REGISTER_PAGE -->|"Renderuje"| REGISTER_FORM["RegisterForm.tsx"]
         FORGOT_PAGE -->|"Renderuje"| FORGOT_FORM["ForgotPasswordForm.tsx"]
@@ -49,11 +49,11 @@ flowchart TD
         direction TB
         INDEX_PAGE["index.astro<br/>(ZMIENIONY)"]
         GENERATE_PAGE["generate.astro<br/>(ZMIENIONY)"]
-        
+
         INDEX_PAGE -->|"Przekierowanie<br/>logic"| REDIR_LOGIC{{"Zalogowany?"}}
         REDIR_LOGIC -->|"Tak"| REDIR_GEN["/generate"]
         REDIR_LOGIC -->|"Nie"| REDIR_LOGIN["/auth/login"]
-        
+
         GENERATE_PAGE -->|"Renderuje"| FLASHCARD_VIEW["FlashcardGenerationView"]
     end
 
@@ -64,7 +64,7 @@ flowchart TD
         REGISTER_FORM
         FORGOT_FORM
         RESET_FORM
-        
+
         LOGIN_FORM -->|"POST"| API_LOGIN["API: /api/auth/login"]
         REGISTER_FORM -->|"POST"| API_REGISTER["API: /api/auth/register"]
         FORGOT_FORM -->|"POST"| API_FORGOT["API: /api/auth/forgot-password"]
@@ -77,7 +77,7 @@ flowchart TD
         HEADER -->|"Dla zalogowanych"| AUTH_MENU["Menu użytkownika<br/>(email, avatar, wyloguj)"]
         HEADER -->|"Dla anonimowych"| ANON_MENU["Przyciski<br/>(Zaloguj, Rejestracja)"]
         HEADER -->|"Zawiera"| THEME_TOGGLE["ThemeToggle"]
-        
+
         AUTH_MENU -->|"Wyloguj → POST"| API_LOGOUT["API: /api/auth/logout"]
         THEME_TOGGLE -->|"Używa"| USE_THEME["useTheme hook"]
     end
@@ -92,15 +92,15 @@ flowchart TD
         FLASHCARD_VIEW -->|"Renderuje"| BULK_SAVE["BulkSaveButton"]
         FLASHCARD_VIEW -->|"Renderuje"| ERROR_NOTIF["ErrorNotification"]
         FLASHCARD_VIEW -->|"Używa"| USE_GENERATE["useGenerateFlashcards hook"]
-        
+
         TEXT_INPUT -->|"onChange"| GEN_STATE
         GEN_BUTTON -->|"onClick"| USE_GENERATE
         USE_GENERATE -->|"POST"| API_GENERATIONS["API: /api/generations<br/>(ZMIENIONY: +user_id)"]
-        
+
         FLASHCARD_LIST -->|"Renderuje wiele"| FLASHCARD_ITEM["FlashcardListItem"]
         FLASHCARD_ITEM -->|"Akcje użytkownika"| ITEM_ACTIONS["Akceptuj / Edytuj / Odrzuć"]
         ITEM_ACTIONS -->|"Aktualizuje"| GEN_STATE
-        
+
         BULK_SAVE -->|"POST"| API_FLASHCARDS["API: /api/flashcards<br/>(ZMIENIONY: +user_id)"]
     end
 
@@ -116,7 +116,7 @@ flowchart TD
     %% ===== API ENDPOINTS =====
     subgraph API["🔌 API Endpoints"]
         direction TB
-        
+
         subgraph API_AUTH_GROUP["Autentykacja (NOWE)"]
             API_LOGIN
             API_REGISTER
@@ -124,12 +124,12 @@ flowchart TD
             API_FORGOT
             API_RESET
         end
-        
+
         subgraph API_FLASHCARD_GROUP["Fiszki (ZMODYFIKOWANE)"]
             API_GENERATIONS
             API_FLASHCARDS
         end
-        
+
         API_AUTH_GROUP -->|"Integracja"| SUPABASE_AUTH["Supabase Auth"]
         API_FLASHCARD_GROUP -->|"Wymaga"| USER_SESSION["Session + user_id<br/>(z context.locals)"]
     end
@@ -159,14 +159,14 @@ flowchart TD
     class LOGIN_FORM,REGISTER_FORM,FORGOT_FORM,RESET_FORM,HEADER newComponent
     class LOGIN_PAGE,REGISTER_PAGE,FORGOT_PAGE,RESET_PAGE newComponent
     class API_LOGIN,API_REGISTER,API_LOGOUT,API_FORGOT,API_RESET newComponent
-    
+
     class INDEX_PAGE,GENERATE_PAGE,LAYOUT modifiedComponent
     class API_GENERATIONS,API_FLASHCARDS modifiedComponent
-    
+
     class FLASHCARD_VIEW,TEXT_INPUT,GEN_BUTTON,FLASHCARD_LIST,FLASHCARD_ITEM existingComponent
     class BULK_SAVE,ERROR_NOTIF,SKELETON,THEME_TOGGLE existingComponent
     class UI_BUTTON,UI_CARD,UI_AVATAR,USE_GENERATE,USE_THEME existingComponent
-    
+
     class MID,PROT,SESS middleware
 ```
 
@@ -188,12 +188,14 @@ flowchart TD
 ## Kluczowe zmiany w architekturze
 
 ### 1. Warstwa Middleware
+
 - **Middleware (index.ts)** został rozbudowany o:
   - Wczytywanie sesji użytkownika z Supabase Auth
   - Ochronę tras chronionych (redirect anonimowych użytkowników)
   - Przekazywanie `context.locals.session` i `context.locals.user` do całej aplikacji
 
 ### 2. Layout i Nawigacja
+
 - **Layout.astro** otrzymał:
   - Warunkowe renderowanie komponentu `AuthHeader`
   - Przekazywanie stanu sesji do komponentów React
@@ -202,18 +204,23 @@ flowchart TD
   - Wyświetla przyciski logowania/rejestracji dla anonimowych
 
 ### 3. Strony Autentykacji
+
 Dodano cztery nowe publiczne strony:
+
 - `auth/login.astro` → `LoginForm.tsx`
 - `auth/register.astro` → `RegisterForm.tsx`
 - `auth/forgot-password.astro` → `ForgotPasswordForm.tsx`
 - `auth/reset-password.astro` → `ResetPasswordForm.tsx`
 
 ### 4. Ochrona Tras
+
 - `index.astro` - dodano logikę przekierowania (zalogowany → `/generate`, anonimowy → `/auth/login`)
 - `generate.astro` - jest chroniony przez middleware (wymaga sesji)
 
 ### 5. API Endpoints
+
 **Nowe (autentykacja):**
+
 - `POST /api/auth/login`
 - `POST /api/auth/register`
 - `POST /api/auth/logout`
@@ -221,17 +228,20 @@ Dodano cztery nowe publiczne strony:
 - `POST /api/auth/reset-password`
 
 **Zmodyfikowane (izolacja danych):**
+
 - `POST /api/generations` - teraz wymaga `user_id` z sesji
 - `POST /api/flashcards` - teraz wymaga `user_id` z sesji
 
 ### 6. Przepływ Danych
 
 **Autentykacja:**
+
 ```
 Użytkownik → Formularz → API Endpoint → Supabase Auth → Cookie sesji → Middleware → context.locals
 ```
 
 **Generowanie fiszek (po zalogowaniu):**
+
 ```
 Użytkownik → TextInputArea → GenerateButton → useGenerateFlashcards → API (+user_id) → OpenRouter LLM → Propozycje fiszek → FlashcardList → Akceptacja → BulkSaveButton → API (+user_id) → Supabase Database
 ```
@@ -239,6 +249,7 @@ Użytkownik → TextInputArea → GenerateButton → useGenerateFlashcards → A
 ## Komponenty według funkcjonalności
 
 ### Moduł Autentykacji (NOWY)
+
 - `LoginForm.tsx` - formularz logowania z walidacją
 - `RegisterForm.tsx` - formularz rejestracji z wymogami siły hasła
 - `ForgotPasswordForm.tsx` - formularz żądania resetu hasła
@@ -246,6 +257,7 @@ Użytkownik → TextInputArea → GenerateButton → useGenerateFlashcards → A
 - `AuthHeader.tsx` - nagłówek z menu użytkownika
 
 ### Moduł Generowania Fiszek (ISTNIEJĄCY)
+
 - `FlashcardGenerationView` - główny kontener
 - `TextInputArea` - pole tekstowe z walidacją (1000-10000 znaków)
 - `GenerateButton` - przycisk generowania z loadingiem
@@ -255,6 +267,7 @@ Użytkownik → TextInputArea → GenerateButton → useGenerateFlashcards → A
 - `useGenerateFlashcards` - custom hook do komunikacji z API
 
 ### Komponenty UI Współdzielone (shadcn/ui)
+
 - `Button` - przycisk z wariantami
 - `Card`, `CardHeader`, `CardTitle`, `CardContent` - komponenty karty
 - `Avatar` - avatar użytkownika z inicjałami
@@ -262,6 +275,7 @@ Użytkownik → TextInputArea → GenerateButton → useGenerateFlashcards → A
 - `SkeletonLoader` - loader podczas ładowania
 
 ### Utilities
+
 - `ThemeToggle` - przełącznik motywu (jasny/ciemny)
 - `useTheme` - hook zarządzania motywem
 - `useGenerateFlashcards` - hook generowania fiszek
@@ -269,16 +283,20 @@ Użytkownik → TextInputArea → GenerateButton → useGenerateFlashcards → A
 ## Bezpieczeństwo
 
 ### Ochrona Tras
+
 Middleware sprawdza sesję dla każdego żądania do stron chronionych:
+
 - Jeśli brak sesji → redirect do `/auth/login`
 - Jeśli sesja wygasła → automatyczne odświeżenie lub wylogowanie
 
 ### Izolacja Danych
+
 - Każdy API endpoint wymaga `user_id` z `context.locals.user`
 - Fiszki i generacje są zapisywane z `user_id` w bazie danych
 - Brak możliwości dostępu do danych innych użytkowników
 
 ### Cookie Sesji
+
 - HttpOnly: true (brak dostępu z JavaScript)
 - Secure: true (tylko HTTPS w produkcji)
 - SameSite: Strict (ochrona przed CSRF)
@@ -286,12 +304,14 @@ Middleware sprawdza sesję dla każdego żądania do stron chronionych:
 ## Integracja z Supabase
 
 ### Supabase Auth
+
 - Provider: Email/Password
 - Zarządzanie sesjami przez JWT tokeny
 - Automatyczne odświeżanie tokenów
 - Email templates dla resetowania hasła
 
 ### Supabase Database
+
 - Tabele: `flashcards`, `generations`, `generation_error_logs`
 - Nowe kolumny: `user_id` (foreign key → `auth.users.id`)
 - Row Level Security (RLS) - przyszłościowo
@@ -299,17 +319,20 @@ Middleware sprawdza sesję dla każdego żądania do stron chronionych:
 ## Następne Kroki
 
 ### Faza 1 (MVP)
+
 - ✅ Architektura UI zaprojektowana
 - ⏳ Implementacja komponentów autentykacji
 - ⏳ Integracja z Supabase Auth
 - ⏳ Migracje bazy danych (dodanie `user_id`)
 
 ### Faza 2
+
 - ⏳ Strona "Moje Fiszki" (lista zapisanych fiszek)
 - ⏳ Profil użytkownika
 - ⏳ Ustawienia konta
 
 ### Faza 3
+
 - ⏳ Sesja nauki (spaced repetition)
 - ⏳ Statystyki użytkownika
 - ⏳ Eksport fiszek
@@ -319,4 +342,3 @@ Middleware sprawdza sesję dla każdego żądania do stron chronionych:
 **Data utworzenia:** 2025-10-17  
 **Wersja:** 1.0  
 **Status:** ✅ Zakończona analiza architektury UI
-
