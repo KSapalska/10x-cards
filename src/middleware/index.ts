@@ -111,11 +111,18 @@ export const onRequest = defineMiddleware(async (context, next) => {
       context.locals.session = refreshResult.session;
       context.locals.user = refreshResult.user ?? null;
     } else {
-      // Refresh failed, clear session
+      // Refresh failed, clear session and redirect to login
       context.cookies.delete("sb-access-token", { path: "/" });
       context.cookies.delete("sb-refresh-token", { path: "/" });
       context.locals.session = null;
       context.locals.user = null;
+
+      // Redirect to login page if on a protected route
+      const pathname = context.url.pathname;
+      if (PROTECTED_ROUTES.some((route) => pathname.startsWith(route))) {
+        const returnTo = encodeURIComponent(pathname + context.url.search);
+        return context.redirect(`/auth/login?returnTo=${returnTo}`);
+      }
     }
   }
 
