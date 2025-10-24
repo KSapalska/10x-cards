@@ -22,7 +22,7 @@ jobs:
         run: npm ci
 
       - name: Create .env file
-        run: copy env.test.example .env
+        run: cp env.test.example .env
 
       - name: Run tests
         run: npm test
