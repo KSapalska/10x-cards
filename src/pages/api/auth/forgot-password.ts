@@ -65,7 +65,11 @@ export const POST: APIRoute = async ({ request, locals }) => {
       }
     );
   } catch (error) {
-    console.error("Forgot password endpoint error:", error);
+    // Silently handle errors in production
+    if (import.meta.env.DEV) {
+      // eslint-disable-next-line no-console
+      console.error("Forgot password endpoint error:", error);
+    }
 
     return new Response(
       JSON.stringify({
