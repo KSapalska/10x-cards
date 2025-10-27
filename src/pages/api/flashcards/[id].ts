@@ -60,10 +60,13 @@ export const GET: APIRoute = async ({ params, locals }) => {
       headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
-    // eslint-disable-next-line no-console
-    console.error("Error fetching flashcard:", error);
-
     const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";
+
+    // Silently handle errors in production
+    if (import.meta.env.DEV) {
+      // eslint-disable-next-line no-console
+      console.error("Error fetching flashcard:", error);
+    }
 
     return new Response(
       JSON.stringify({
@@ -139,10 +142,13 @@ export const PUT: APIRoute = async ({ params, request, locals }) => {
       headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
-    // eslint-disable-next-line no-console
-    console.error("Error updating flashcard:", error);
-
     // Handle "not found" error
+
+    // Silently handle errors in production
+    if (import.meta.env.DEV) {
+      // eslint-disable-next-line no-console
+      console.error("Error updating flashcard:", error);
+    }
     if (error instanceof Error && error.message.includes("not found")) {
       return new Response(
         JSON.stringify({
@@ -235,10 +241,13 @@ export const DELETE: APIRoute = async ({ params, locals }) => {
       }
     );
   } catch (error) {
-    // eslint-disable-next-line no-console
-    console.error("Error deleting flashcard:", error);
-
     const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";
+
+    // Silently handle errors in production
+    if (import.meta.env.DEV) {
+      // eslint-disable-next-line no-console
+      console.error("Error deleting flashcard:", error);
+    }
 
     return new Response(
       JSON.stringify({

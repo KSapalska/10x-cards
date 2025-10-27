@@ -89,12 +89,24 @@ export const POST: APIRoute = async ({ request, locals, cookies }) => {
     });
 
     // Return success with user data (no sensitive info)
+    if (!result.user) {
+      return new Response(
+        JSON.stringify({
+          error: "Błąd podczas pobierania danych użytkownika",
+        }),
+        {
+          status: 500,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+    }
+
     return new Response(
       JSON.stringify({
         success: true,
         user: {
-          id: result.user!.id,
-          email: result.user!.email,
+          id: result.user.id,
+          email: result.user.email,
         },
       }),
       {
@@ -103,7 +115,11 @@ export const POST: APIRoute = async ({ request, locals, cookies }) => {
       }
     );
   } catch (error) {
-    console.error("Login endpoint error:", error);
+    // Silently handle errors in production
+    if (import.meta.env.DEV) {
+      // eslint-disable-next-line no-console
+      console.error("Login endpoint error:", error);
+    }
 
     return new Response(
       JSON.stringify({
