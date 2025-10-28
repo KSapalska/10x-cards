@@ -227,10 +227,10 @@ test.describe("Flashcard Management (CRUD Operations)", () => {
     const textarea = page.locator("textarea");
     await textarea.clear();
     await textarea.pressSequentially(sourceText, { delay: 0 });
-    
+
     // Wait for button to be enabled
     await page.waitForSelector('button:has-text("Generuj fiszki"):not([disabled])', { timeout: 5000 });
-    
+
     await page.click('button:has-text("Generuj fiszki")');
 
     // Wait for flashcards to be generated
