@@ -34,10 +34,12 @@ export function AuthHeader({ user }: AuthHeaderProps) {
         // Redirect to login page after successful logout
         window.location.href = "/auth/login";
       } else {
+        // eslint-disable-next-line no-console
         console.error("Logout failed");
         setIsLoggingOut(false);
       }
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error("Logout error:", error);
       setIsLoggingOut(false);
     }

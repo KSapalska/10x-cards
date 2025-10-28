@@ -1,6 +1,6 @@
 ### 1. Project name
 
-10x-cards
+10x-cards.pl
 
 Badges: Node v22.14.0 • Astro v5 • React v19 • Tailwind v4
 

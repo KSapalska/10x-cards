@@ -59,10 +59,13 @@ export const POST: APIRoute = async ({ request, locals }) => {
       headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
-    // eslint-disable-next-line no-console
-    console.error("Error processing generation request:", error);
-
     // Return more detailed error for debugging
+
+    // Silently handle errors in production
+    if (import.meta.env.DEV) {
+      // eslint-disable-next-line no-console
+      console.error("Error processing generation request:", error);
+    }
     const errorMessage = error instanceof Error ? error.message : JSON.stringify(error, null, 2);
     return new Response(
       JSON.stringify({

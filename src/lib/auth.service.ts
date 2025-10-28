@@ -42,6 +42,7 @@ export class AuthService {
 
       if (error) {
         // Log detailed error for debugging
+        // eslint-disable-next-line no-console
         console.error("Supabase registration error:", {
           message: error.message,
           status: error.status,
@@ -79,6 +80,7 @@ export class AuthService {
         user: data.user,
       };
     } catch (err) {
+      // eslint-disable-next-line no-console
       console.error("Registration error:", err);
       return {
         success: false,
@@ -102,6 +104,7 @@ export class AuthService {
 
       if (error) {
         // Log detailed error for debugging
+        // eslint-disable-next-line no-console
         console.error("Supabase auth error:", {
           message: error.message,
           status: error.status,
@@ -128,6 +131,7 @@ export class AuthService {
         user: data.user,
       };
     } catch (err) {
+      // eslint-disable-next-line no-console
       console.error("Login error:", err);
       return {
         success: false,
@@ -145,6 +149,7 @@ export class AuthService {
       const { error } = await this.supabase.auth.signOut();
 
       if (error) {
+        // eslint-disable-next-line no-console
         console.error("Logout error:", error);
         return {
           success: false,
@@ -156,6 +161,7 @@ export class AuthService {
         success: true,
       };
     } catch (err) {
+      // eslint-disable-next-line no-console
       console.error("Logout error:", err);
       return {
         success: false,
@@ -175,6 +181,7 @@ export class AuthService {
       } = await this.supabase.auth.getSession();
       return session;
     } catch (err) {
+      // eslint-disable-next-line no-console
       console.error("Get session error:", err);
       return null;
     }
@@ -191,6 +198,7 @@ export class AuthService {
       } = await this.supabase.auth.getUser();
       return user;
     } catch (err) {
+      // eslint-disable-next-line no-console
       console.error("Get user error:", err);
       return null;
     }
@@ -209,6 +217,7 @@ export class AuthService {
       } = await this.supabase.auth.refreshSession();
 
       if (error) {
+        // eslint-disable-next-line no-console
         console.error("Refresh session error:", error);
         return {
           success: false,
@@ -229,6 +238,7 @@ export class AuthService {
         user: session.user,
       };
     } catch (err) {
+      // eslint-disable-next-line no-console
       console.error("Refresh session error:", err);
       return {
         success: false,
@@ -268,6 +278,7 @@ export class AuthService {
       });
 
       if (error) {
+        // eslint-disable-next-line no-console
         console.error("Forgot password error:", error);
         // For security, always return success even if email doesn't exist
         // This prevents email enumeration attacks
@@ -278,6 +289,7 @@ export class AuthService {
         success: true,
       };
     } catch (err) {
+      // eslint-disable-next-line no-console
       console.error("Forgot password error:", err);
       // Still return success for security
       return {
@@ -302,6 +314,7 @@ export class AuthService {
       } = await this.supabase.auth.getSession();
 
       if (sessionError || !session) {
+        // eslint-disable-next-line no-console
         console.error("Session error:", sessionError);
         return {
           success: false,
@@ -315,6 +328,7 @@ export class AuthService {
       });
 
       if (updateError) {
+        // eslint-disable-next-line no-console
         console.error("Password update error:", updateError);
         return {
           success: false,
@@ -326,6 +340,7 @@ export class AuthService {
         success: true,
       };
     } catch (err) {
+      // eslint-disable-next-line no-console
       console.error("Reset password error:", err);
       return {
         success: false,

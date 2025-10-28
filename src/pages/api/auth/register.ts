@@ -129,7 +129,11 @@ export const POST: APIRoute = async ({ request, locals, cookies }) => {
       }
     );
   } catch (error) {
-    console.error("Register endpoint error:", error);
+    // Silently handle errors in production
+    if (import.meta.env.DEV) {
+      // eslint-disable-next-line no-console
+      console.error("Register endpoint error:", error);
+    }
 
     return new Response(
       JSON.stringify({

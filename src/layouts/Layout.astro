@@ -28,18 +28,18 @@ const user = Astro.locals.user
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
     <script is:inline>
-      // Initialize theme before page renders to prevent flash
+      /* eslint-disable */
       (function () {
         const theme =
           localStorage.getItem("theme") ||
           (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
-
         if (theme === "dark") {
           document.documentElement.classList.add("dark");
         } else {
           document.documentElement.classList.remove("dark");
         }
       })();
+      /* eslint-enable */
     </script>
   </head>
   <body>

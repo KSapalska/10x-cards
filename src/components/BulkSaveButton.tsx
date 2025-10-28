@@ -51,9 +51,11 @@ export function BulkSaveButton({ flashcards, generationId, onSuccess, onError }:
       }
 
       const result = await response.json();
+      // eslint-disable-next-line no-console
       console.log("Zapisano fiszki:", result);
       onSuccess?.();
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error("Błąd podczas zapisywania fiszek:", error);
       onError?.(error instanceof Error ? error.message : "Nieznany błąd podczas zapisywania");
     } finally {

@@ -33,7 +33,7 @@ export function ResetPasswordForm({ onSubmit }: ResetPasswordFormProps) {
   // Note: Supabase automatically sets session from URL params (access_token, refresh_token)
   // when user clicks the reset link from email. The session is handled by middleware.
 
-  const validatePassword = (value: string): string | undefined => {
+  const validatePassword = useCallback((value: string): string | undefined => {
     if (!value) {
       return "Hasło jest wymagane";
     }
@@ -46,21 +46,24 @@ export function ResetPasswordForm({ onSubmit }: ResetPasswordFormProps) {
     if (!/[0-9]/.test(value)) {
       return "Hasło musi zawierać co najmniej jedną cyfrę";
     }
-    if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(value)) {
+    if (!/[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(value)) {
       return "Hasło musi zawierać co najmniej jeden znak specjalny";
     }
     return undefined;
-  };
+  }, []);
 
-  const validateConfirmPassword = (value: string): string | undefined => {
-    if (!value) {
-      return "Potwierdzenie hasła jest wymagane";
-    }
-    if (value !== password) {
-      return "Hasła nie są identyczne";
-    }
-    return undefined;
-  };
+  const validateConfirmPassword = useCallback(
+    (value: string): string | undefined => {
+      if (!value) {
+        return "Potwierdzenie hasła jest wymagane";
+      }
+      if (value !== password) {
+        return "Hasła nie są identyczne";
+      }
+      return undefined;
+    },
+    [password]
+  );
 
   const passwordStrength = useMemo((): PasswordStrength => {
     if (!password) {
@@ -72,7 +75,7 @@ export function ResetPasswordForm({ onSubmit }: ResetPasswordFormProps) {
     if (password.length >= 12) score++;
     if (/[a-z]/.test(password) && /[A-Z]/.test(password)) score++;
     if (/[0-9]/.test(password)) score++;
-    if (/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) score++;
+    if (/[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(password)) score++;
 
     if (score <= 2) {
       return { score, label: "Słabe", color: "bg-destructive" };
@@ -86,12 +89,12 @@ export function ResetPasswordForm({ onSubmit }: ResetPasswordFormProps) {
   const handlePasswordBlur = useCallback(() => {
     const passwordError = validatePassword(password);
     setFieldErrors((prev) => ({ ...prev, password: passwordError }));
-  }, [password]);
+  }, [password, validatePassword]);
 
   const handleConfirmPasswordBlur = useCallback(() => {
     const confirmPasswordError = validateConfirmPassword(confirmPassword);
     setFieldErrors((prev) => ({ ...prev, confirmPassword: confirmPasswordError }));
-  }, [confirmPassword, password]);
+  }, [confirmPassword, validateConfirmPassword]);
 
   const handleSubmit = useCallback(
     async (e: FormEvent<HTMLFormElement>) => {
@@ -151,7 +154,7 @@ export function ResetPasswordForm({ onSubmit }: ResetPasswordFormProps) {
         setIsLoading(false);
       }
     },
-    [password, confirmPassword, onSubmit]
+    [password, confirmPassword, onSubmit, validatePassword, validateConfirmPassword]
   );
 
   if (tokenError) {
@@ -232,7 +235,6 @@ export function ResetPasswordForm({ onSubmit }: ResetPasswordFormProps) {
               }
               autoComplete="new-password"
               required
-              autoFocus
             />
             {fieldErrors.password && (
               <p id={`${passwordId}-error`} className="text-sm text-destructive" role="alert">

@@ -34,7 +34,14 @@ export class GeneratePage {
   }
 
   async fillSourceText(text: string) {
-    await this.sourceTextTextarea.fill(text);
+    // Clear first
+    await this.sourceTextTextarea.clear();
+    // Use pressSequentially to trigger React onChange
+    await this.sourceTextTextarea.pressSequentially(text, { delay: 0 });
+    // Wait for React to process the change and enable the button if text is valid
+    if (text.length >= 1000) {
+      await expect(this.generateButton).toBeEnabled({ timeout: 5000 });
+    }
   }
 
   async clickGenerate() {

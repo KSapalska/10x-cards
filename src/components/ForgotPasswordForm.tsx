@@ -143,7 +143,6 @@ export function ForgotPasswordForm({ onSubmit }: ForgotPasswordFormProps) {
               aria-describedby={fieldErrors.email ? `${emailId}-error` : undefined}
               autoComplete="email"
               required
-              autoFocus
             />
             {fieldErrors.email && (
               <p id={`${emailId}-error`} className="text-sm text-destructive" role="alert">
