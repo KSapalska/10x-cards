@@ -91,7 +91,7 @@ export function EditFlashcardModal({
           </h2>
           {isAiFull && (
             <p className="mt-1 text-xs text-muted-foreground">
-              💡 Po edycji fiszka zostanie oznaczona jako "AI (edytowane)"
+              💡 Po edycji fiszka zostanie oznaczona jako &quot;AI (edytowane)&quot;
             </p>
           )}
         </div>

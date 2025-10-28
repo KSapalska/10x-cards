@@ -29,6 +29,7 @@ export class SpacedRepetitionService {
       .order("due", { ascending: true });
 
     if (error) {
+      // eslint-disable-next-line no-console
       console.error("Error fetching study session:", error);
       throw new Error("Could not retrieve study session flashcards.");
     }
@@ -53,6 +54,7 @@ export class SpacedRepetitionService {
       .single();
 
     if (fetchError || !flashcard) {
+      // eslint-disable-next-line no-console
       console.error("Error fetching flashcard to rate:", fetchError);
       throw new Error("Flashcard not found or user does not have access.");
     }
@@ -86,6 +88,7 @@ export class SpacedRepetitionService {
     );
 
     if (transactionError) {
+      // eslint-disable-next-line no-console
       console.error("Error in rate_flashcard_and_log_review RPC:", transactionError);
       throw new Error("Failed to update flashcard and log review.");
     }
