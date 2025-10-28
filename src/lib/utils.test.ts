@@ -30,8 +30,10 @@ describe("cn", () => {
     });
 
     it("should handle conditional expressions", () => {
-      expect(cn("text-sm", false && "hidden", "font-bold")).toBe("text-sm font-bold");
-      expect(cn("text-sm", true && "hidden", "font-bold")).toBe("text-sm hidden font-bold");
+      const condition1 = false;
+      const condition2 = true;
+      expect(cn("text-sm", condition1 && "hidden", "font-bold")).toBe("text-sm font-bold");
+      expect(cn("text-sm", condition2 && "hidden", "font-bold")).toBe("text-sm hidden font-bold");
     });
   });
 
@@ -53,7 +55,8 @@ describe("cn", () => {
     });
 
     it("should resolve complex conflicting classes", () => {
-      expect(cn("p-2", "text-sm", undefined, false && "hidden", "p-3")).toBe("text-sm p-3");
+      const condition = false;
+      expect(cn("p-2", "text-sm", undefined, condition && "hidden", "p-3")).toBe("text-sm p-3");
     });
   });
 

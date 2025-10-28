@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import type { FlashcardsListResponseDto, Source } from "../../types";
 
 interface FlashcardsQueryParams {
@@ -18,7 +18,7 @@ export function useFlashcards(params: FlashcardsQueryParams) {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchFlashcards = async () => {
+  const fetchFlashcards = useCallback(async () => {
     setIsLoading(true);
     setError(null);
 
@@ -67,12 +67,11 @@ export function useFlashcards(params: FlashcardsQueryParams) {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [params.page, params.limit, params.sort, params.order, params.source, params.generation_id]);
 
   useEffect(() => {
     fetchFlashcards();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [params.page, params.limit, params.sort, params.order, params.source, params.generation_id]);
+  }, [fetchFlashcards]);
 
   return {
     data,

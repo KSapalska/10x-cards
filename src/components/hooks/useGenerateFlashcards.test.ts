@@ -124,13 +124,13 @@ describe("useGenerateFlashcards", () => {
       // Resolve the promise
       if (resolvePromise) {
         resolvePromise({
-        ok: true,
-        json: async () =>
-          ({
-            generation_id: 1,
-            flashcards_proposals: [],
-            generated_count: 0,
-          }) satisfies GenerationCreateResponseDto,
+          ok: true,
+          json: async () =>
+            ({
+              generation_id: 1,
+              flashcards_proposals: [],
+              generated_count: 0,
+            }) satisfies GenerationCreateResponseDto,
         });
       }
 

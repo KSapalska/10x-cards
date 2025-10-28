@@ -33,6 +33,7 @@ export function DeleteConfirmationDialog({
   };
 
   return (
+    // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm"
       onClick={handleBackdropClick}
@@ -41,6 +42,7 @@ export function DeleteConfirmationDialog({
       aria-modal="true"
       aria-labelledby="delete-dialog-title"
       aria-describedby="delete-dialog-description"
+      tabIndex={-1}
     >
       <div className="relative w-full max-w-md rounded-lg border bg-card p-6 shadow-lg">
         {/* Header */}

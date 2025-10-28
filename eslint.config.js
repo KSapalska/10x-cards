@@ -20,6 +20,19 @@ const baseConfig = tseslint.config({
   rules: {
     "no-console": "warn",
     "no-unused-vars": "off",
+    "@typescript-eslint/no-explicit-any": [
+      "error",
+      {
+        ignoreRestArgs: true,
+      },
+    ],
+  },
+});
+
+const testConfig = tseslint.config({
+  files: ["**/*.test.ts", "**/*.test.tsx"],
+  rules: {
+    "@typescript-eslint/no-explicit-any": "off",
   },
 });
 
@@ -58,7 +71,11 @@ const reactConfig = tseslint.config({
 
 export default tseslint.config(
   includeIgnoreFile(gitignorePath),
+  {
+    ignores: ["src/db/database.types.ts"],
+  },
   baseConfig,
+  testConfig,
   jsxA11yConfig,
   reactConfig,
   eslintPluginAstro.configs["flat/recommended"],

@@ -39,7 +39,6 @@ export default function FlashcardsView() {
 
   // Success/error messages
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   // Hooks
   const { data, isLoading, error, refetch } = useFlashcards(queryParams);
@@ -169,7 +168,7 @@ export default function FlashcardsView() {
           )}
 
           {/* Error Message */}
-          {(error || errorMessage) && (
+          {error && (
             <div
               className="rounded-md bg-destructive/10 p-4 text-destructive border border-destructive/20"
               role="alert"
@@ -189,7 +188,7 @@ export default function FlashcardsView() {
                     clipRule="evenodd"
                   />
                 </svg>
-                <p className="text-sm font-medium">{error || errorMessage}</p>
+                <p className="text-sm font-medium">{error}</p>
               </div>
             </div>
           )}
