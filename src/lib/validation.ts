@@ -48,7 +48,7 @@ export const strongPasswordSchema = z
   .min(8, "Hasło musi zawierać co najmniej 8 znaków")
   .regex(/[A-Z]/, "Hasło musi zawierać co najmniej jedną wielką literę")
   .regex(/[0-9]/, "Hasło musi zawierać co najmniej jedną cyfrę")
-  .regex(/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>/?]/, "Hasło musi zawierać co najmniej jeden znak specjalny");
+  .regex(/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/, "Hasło musi zawierać co najmniej jeden znak specjalny");
 
 /**
  * Login request validation schema

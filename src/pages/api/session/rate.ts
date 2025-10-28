@@ -26,11 +26,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
       },
     });
   } catch (error) {
-    // Silently handle errors in production
-    if (import.meta.env.DEV) {
-      // eslint-disable-next-line no-console
-      console.error("Error rating flashcard:", error);
-    }
+    console.error("Error rating flashcard:", error);
     if (error instanceof Error && error.message.includes("not found")) {
       return new Response("Flashcard not found", { status: 404 });
     }

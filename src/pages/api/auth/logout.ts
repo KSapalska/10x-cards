@@ -34,11 +34,7 @@ export const POST: APIRoute = async ({ locals, cookies }) => {
     });
 
     if (!result.success) {
-      // Silently handle errors in production
-      if (import.meta.env.DEV) {
-        // eslint-disable-next-line no-console
-        console.error("Logout error:", result.error);
-      }
+      console.error("Logout error:", result.error);
       // Still return success since cookies are cleared
     }
 
@@ -52,11 +48,7 @@ export const POST: APIRoute = async ({ locals, cookies }) => {
       }
     );
   } catch (error) {
-    // Silently handle errors in production
-    if (import.meta.env.DEV) {
-      // eslint-disable-next-line no-console
-      console.error("Logout endpoint error:", error);
-    }
+    console.error("Logout endpoint error:", error);
 
     // Even on error, try to clear cookies
     cookies.delete("sb-access-token", { path: "/" });

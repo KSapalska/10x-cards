@@ -18,11 +18,7 @@ export const GET: APIRoute = async ({ locals }) => {
       },
     });
   } catch (error) {
-    // Silently handle errors in production
-    if (import.meta.env.DEV) {
-      // eslint-disable-next-line no-console
-      console.error("Error getting study session:", error);
-    }
+    console.error("Error getting study session:", error);
     return new Response("Internal Server Error", { status: 500 });
   }
 };

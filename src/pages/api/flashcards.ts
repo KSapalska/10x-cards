@@ -93,13 +93,10 @@ export const GET: APIRoute = async ({ url, locals }) => {
       headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";
+    // eslint-disable-next-line no-console
+    console.error("Error fetching flashcards:", error);
 
-    // Silently handle errors in production
-    if (import.meta.env.DEV) {
-      // eslint-disable-next-line no-console
-      console.error("Error fetching flashcards:", error);
-    }
+    const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";
 
     return new Response(
       JSON.stringify({
@@ -185,13 +182,10 @@ export const POST: APIRoute = async ({ request, locals }) => {
       }
     );
   } catch (error) {
-    // Handle different types of errors with appropriate status codes
+    // eslint-disable-next-line no-console
+    console.error("Error creating flashcards:", error);
 
-    // Silently handle errors in production
-    if (import.meta.env.DEV) {
-      // eslint-disable-next-line no-console
-      console.error("Error creating flashcards:", error);
-    }
+    // Handle different types of errors with appropriate status codes
     if (error instanceof Error) {
       // Check for validation errors (generation_id not found)
       if (error.message.includes("Invalid generation_id")) {
