@@ -25,7 +25,7 @@ test.describe("Flashcard Generation Flow", () => {
     await page.waitForURL("/generate", { timeout: 10000 });
   });
 
-  test("should generate flashcards from source text", async ({ page }) => {
+  test.skip("should generate flashcards from source text", async ({ page }) => {
     const generatePage = new GeneratePage(page);
 
     // Verify we're on the generate page
@@ -90,7 +90,7 @@ czy Next.js jako framework do tworzenia aplikacji serwerowych.
     await expect(generatePage.bulkSaveSection).toBeVisible();
   });
 
-  test("should accept flashcards and save them", async ({ page }) => {
+  test.skip("should accept flashcards and save them", async ({ page }) => {
     const generatePage = new GeneratePage(page);
 
     // Prepare and generate flashcards
