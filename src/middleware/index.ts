@@ -3,8 +3,8 @@ import { createClient } from "@supabase/supabase-js";
 import type { Database } from "../db/database.types";
 import { AuthService } from "../lib/auth.service";
 
-const supabaseUrl = import.meta.env.SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.SUPABASE_ANON_KEY;
+const supabaseUrl = import.meta.env.SUPABASE_URL || import.meta.env.PUBLIC_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.SUPABASE_ANON_KEY || import.meta.env.PUBLIC_SUPABASE_ANON_KEY;
 
 // Protected routes that require authentication
 const PROTECTED_ROUTES = ["/generate"];
@@ -21,6 +21,19 @@ const AUTH_ROUTES = ["/auth/login", "/auth/register"];
  * - Auth route handling (redirects authenticated users from login/register pages)
  */
 export const onRequest = defineMiddleware(async (context, next) => {
+  // Validate environment variables
+  if (!supabaseUrl || !supabaseAnonKey) {
+    // eslint-disable-next-line no-console
+    console.error("Missing Supabase environment variables", {
+      supabaseUrl: !!supabaseUrl,
+      supabaseAnonKey: !!supabaseAnonKey,
+    });
+    // Continue without auth if env vars are missing (for development only)
+    context.locals.session = null;
+    context.locals.user = null;
+    return next();
+  }
+
   // Check for tokens in URL params (from password reset email link)
   const urlAccessToken = context.url.searchParams.get("access_token");
   const urlRefreshToken = context.url.searchParams.get("refresh_token");
