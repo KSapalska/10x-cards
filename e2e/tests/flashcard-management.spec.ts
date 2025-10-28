@@ -24,9 +24,9 @@ test.describe("Flashcard Management (CRUD Operations)", () => {
     await page.waitForURL("/generate", { timeout: 10000 });
   });
 
-  test("GET /api/flashcards - should return paginated list of flashcards", async ({ request }) => {
+  test("GET /api/flashcards - should return paginated list of flashcards", async ({ page }) => {
     // Create a test flashcard first
-    const createResponse = await request.post("/api/flashcards", {
+    const createResponse = await page.request.post("/api/flashcards", {
       headers: {
         "Content-Type": "application/json",
       },
@@ -45,7 +45,7 @@ test.describe("Flashcard Management (CRUD Operations)", () => {
     expect(createResponse.ok()).toBeTruthy();
 
     // Now get the list
-    const response = await request.get("/api/flashcards?page=1&limit=10");
+    const response = await page.request.get("/api/flashcards?page=1&limit=10");
 
     expect(response.ok()).toBeTruthy();
     expect(response.status()).toBe(200);
@@ -72,8 +72,8 @@ test.describe("Flashcard Management (CRUD Operations)", () => {
     }
   });
 
-  test("GET /api/flashcards - should filter by source", async ({ request }) => {
-    const response = await request.get("/api/flashcards?source=manual&limit=10");
+  test("GET /api/flashcards - should filter by source", async ({ page }) => {
+    const response = await page.request.get("/api/flashcards?source=manual&limit=10");
 
     expect(response.ok()).toBeTruthy();
     const data = await response.json();
@@ -84,23 +84,23 @@ test.describe("Flashcard Management (CRUD Operations)", () => {
     });
   });
 
-  test("GET /api/flashcards - should validate query params", async ({ request }) => {
+  test("GET /api/flashcards - should validate query params", async ({ page }) => {
     // Invalid page (negative)
-    const response1 = await request.get("/api/flashcards?page=-1");
+    const response1 = await page.request.get("/api/flashcards?page=-1");
     expect(response1.status()).toBe(400);
 
     // Invalid limit (too high)
-    const response2 = await request.get("/api/flashcards?limit=200");
+    const response2 = await page.request.get("/api/flashcards?limit=200");
     expect(response2.status()).toBe(400);
 
     // Invalid sort field
-    const response3 = await request.get("/api/flashcards?sort=invalid_field");
+    const response3 = await page.request.get("/api/flashcards?sort=invalid_field");
     expect(response3.status()).toBe(400);
   });
 
-  test("GET /api/flashcards/[id] - should return flashcard by ID", async ({ request }) => {
+  test("GET /api/flashcards/[id] - should return flashcard by ID", async ({ page }) => {
     // First create a flashcard
-    const createResponse = await request.post("/api/flashcards", {
+    const createResponse = await page.request.post("/api/flashcards", {
       headers: {
         "Content-Type": "application/json",
       },
@@ -116,11 +116,12 @@ test.describe("Flashcard Management (CRUD Operations)", () => {
       },
     });
 
+    expect(createResponse.ok()).toBeTruthy();
     const created = await createResponse.json();
     const flashcardId = created.flashcards[0].id;
 
     // Now get it by ID
-    const response = await request.get(`/api/flashcards/${flashcardId}`);
+    const response = await page.request.get(`/api/flashcards/${flashcardId}`);
 
     expect(response.ok()).toBeTruthy();
     expect(response.status()).toBe(200);
@@ -133,25 +134,25 @@ test.describe("Flashcard Management (CRUD Operations)", () => {
     expect(flashcard.source).toBe("manual");
   });
 
-  test("GET /api/flashcards/[id] - should return 404 for non-existent flashcard", async ({ request }) => {
-    const response = await request.get("/api/flashcards/999999999");
+  test("GET /api/flashcards/[id] - should return 404 for non-existent flashcard", async ({ page }) => {
+    const response = await page.request.get("/api/flashcards/999999999");
 
     expect(response.status()).toBe(404);
     const data = await response.json();
     expect(data.error).toBe("Flashcard not found");
   });
 
-  test("GET /api/flashcards/[id] - should return 400 for invalid ID", async ({ request }) => {
-    const response = await request.get("/api/flashcards/invalid-id");
+  test("GET /api/flashcards/[id] - should return 400 for invalid ID", async ({ page }) => {
+    const response = await page.request.get("/api/flashcards/invalid-id");
 
     expect(response.status()).toBe(400);
     const data = await response.json();
     expect(data.error).toBe("Invalid flashcard ID");
   });
 
-  test("PUT /api/flashcards/[id] - should update flashcard", async ({ request }) => {
+  test("PUT /api/flashcards/[id] - should update flashcard", async ({ page }) => {
     // Create a flashcard
-    const createResponse = await request.post("/api/flashcards", {
+    const createResponse = await page.request.post("/api/flashcards", {
       headers: {
         "Content-Type": "application/json",
       },
@@ -167,11 +168,12 @@ test.describe("Flashcard Management (CRUD Operations)", () => {
       },
     });
 
+    expect(createResponse.ok()).toBeTruthy();
     const created = await createResponse.json();
     const flashcardId = created.flashcards[0].id;
 
     // Update it
-    const updateResponse = await request.put(`/api/flashcards/${flashcardId}`, {
+    const updateResponse = await page.request.put(`/api/flashcards/${flashcardId}`, {
       headers: {
         "Content-Type": "application/json",
       },
@@ -192,7 +194,7 @@ test.describe("Flashcard Management (CRUD Operations)", () => {
     expect(updated.source).toBe("manual"); // Should remain manual
   });
 
-  test("PUT /api/flashcards/[id] - should change source from ai-full to ai-edited", async ({ request, page }) => {
+  test("PUT /api/flashcards/[id] - should change source from ai-full to ai-edited", async ({ page }) => {
     // First, generate flashcards via AI to get one with source="ai-full"
     await page.goto("/generate");
 
@@ -204,22 +206,31 @@ test.describe("Flashcard Management (CRUD Operations)", () => {
     Kluczowe cechy JavaScript:
     
     1. Dynamiczne typowanie - zmienne nie wymagają deklaracji typu, typ jest określany w czasie 
-    wykonania.
+    wykonania. To pozwala na większą elastyczność, ale może prowadzić do błędów runtime.
     
     2. Prototypowe dziedziczenie - JavaScript używa prototypów zamiast klas (choć składnia klas 
-    została dodana w ES6).
+    została dodana w ES6). Każdy obiekt może dziedziczyć właściwości i metody z innych obiektów.
     
     3. First-class functions - funkcje są obiektami pierwszej klasy i mogą być przekazywane 
-    jako argumenty.
+    jako argumenty, zwracane z innych funkcji oraz przypisywane do zmiennych.
     
     4. Closure - funkcje mają dostęp do zmiennych z zakresu zewnętrznego nawet po zakończeniu 
-    wykonania funkcji zewnętrznej.
+    wykonania funkcji zewnętrznej. To potężna cecha używana w wielu wzorcach programowania.
     
     5. Event loop - JavaScript używa pętli zdarzeń do asynchronicznego przetwarzania, co pozwala 
-    na nieblokujące operacje I/O.
+    na nieblokujące operacje I/O. Dzięki temu aplikacje mogą obsługiwać wiele operacji jednocześnie.
+    
+    6. DOM manipulation - JavaScript może dynamicznie modyfikować HTML i CSS, co umożliwia 
+    tworzenie interaktywnych interfejsów użytkownika.
     `.trim();
 
-    await page.fill("textarea", sourceText);
+    const textarea = page.locator("textarea");
+    await textarea.clear();
+    await textarea.pressSequentially(sourceText, { delay: 0 });
+    
+    // Wait for button to be enabled
+    await page.waitForSelector('button:has-text("Generuj fiszki"):not([disabled])', { timeout: 5000 });
+    
     await page.click('button:has-text("Generuj fiszki")');
 
     // Wait for flashcards to be generated
@@ -236,7 +247,7 @@ test.describe("Flashcard Management (CRUD Operations)", () => {
     await page.waitForSelector("text=Fiszki zostały pomyślnie zapisane", { timeout: 10000 });
 
     // Get the list of flashcards to find the one with ai-full source
-    const listResponse = await request.get("/api/flashcards?source=ai-full&limit=1");
+    const listResponse = await page.request.get("/api/flashcards?source=ai-full&limit=1");
     const list = await listResponse.json();
 
     if (list.data.length > 0) {
@@ -244,7 +255,7 @@ test.describe("Flashcard Management (CRUD Operations)", () => {
       const flashcardId = aiFlashcard.id;
 
       // Update the ai-full flashcard
-      const updateResponse = await request.put(`/api/flashcards/${flashcardId}`, {
+      const updateResponse = await page.request.put(`/api/flashcards/${flashcardId}`, {
         headers: {
           "Content-Type": "application/json",
         },
@@ -263,9 +274,9 @@ test.describe("Flashcard Management (CRUD Operations)", () => {
     }
   });
 
-  test("PUT /api/flashcards/[id] - should validate input", async ({ request }) => {
+  test("PUT /api/flashcards/[id] - should validate input", async ({ page }) => {
     // Create a flashcard
-    const createResponse = await request.post("/api/flashcards", {
+    const createResponse = await page.request.post("/api/flashcards", {
       headers: {
         "Content-Type": "application/json",
       },
@@ -281,12 +292,13 @@ test.describe("Flashcard Management (CRUD Operations)", () => {
       },
     });
 
+    expect(createResponse.ok()).toBeTruthy();
     const created = await createResponse.json();
     const flashcardId = created.flashcards[0].id;
 
     // Try to update with front too long (> 200 chars)
     const longFront = "a".repeat(201);
-    const response1 = await request.put(`/api/flashcards/${flashcardId}`, {
+    const response1 = await page.request.put(`/api/flashcards/${flashcardId}`, {
       headers: {
         "Content-Type": "application/json",
       },
@@ -298,7 +310,7 @@ test.describe("Flashcard Management (CRUD Operations)", () => {
     expect(response1.status()).toBe(400);
 
     // Try to update with empty body
-    const response2 = await request.put(`/api/flashcards/${flashcardId}`, {
+    const response2 = await page.request.put(`/api/flashcards/${flashcardId}`, {
       headers: {
         "Content-Type": "application/json",
       },
@@ -308,8 +320,8 @@ test.describe("Flashcard Management (CRUD Operations)", () => {
     expect(response2.status()).toBe(400);
   });
 
-  test("PUT /api/flashcards/[id] - should return 404 for non-existent flashcard", async ({ request }) => {
-    const response = await request.put("/api/flashcards/999999999", {
+  test("PUT /api/flashcards/[id] - should return 404 for non-existent flashcard", async ({ page }) => {
+    const response = await page.request.put("/api/flashcards/999999999", {
       headers: {
         "Content-Type": "application/json",
       },
@@ -321,9 +333,9 @@ test.describe("Flashcard Management (CRUD Operations)", () => {
     expect(response.status()).toBe(404);
   });
 
-  test("DELETE /api/flashcards/[id] - should delete flashcard", async ({ request }) => {
+  test("DELETE /api/flashcards/[id] - should delete flashcard", async ({ page }) => {
     // Create a flashcard
-    const createResponse = await request.post("/api/flashcards", {
+    const createResponse = await page.request.post("/api/flashcards", {
       headers: {
         "Content-Type": "application/json",
       },
@@ -339,11 +351,12 @@ test.describe("Flashcard Management (CRUD Operations)", () => {
       },
     });
 
+    expect(createResponse.ok()).toBeTruthy();
     const created = await createResponse.json();
     const flashcardId = created.flashcards[0].id;
 
     // Delete it
-    const deleteResponse = await request.delete(`/api/flashcards/${flashcardId}`);
+    const deleteResponse = await page.request.delete(`/api/flashcards/${flashcardId}`);
 
     expect(deleteResponse.ok()).toBeTruthy();
     expect(deleteResponse.status()).toBe(200);
@@ -353,29 +366,29 @@ test.describe("Flashcard Management (CRUD Operations)", () => {
     expect(result.message).toBe("Flashcard deleted successfully");
 
     // Verify it's gone
-    const getResponse = await request.get(`/api/flashcards/${flashcardId}`);
+    const getResponse = await page.request.get(`/api/flashcards/${flashcardId}`);
     expect(getResponse.status()).toBe(404);
   });
 
-  test("DELETE /api/flashcards/[id] - should return 404 for non-existent flashcard", async ({ request }) => {
-    const response = await request.delete("/api/flashcards/999999999");
+  test("DELETE /api/flashcards/[id] - should return 404 for non-existent flashcard", async ({ page }) => {
+    const response = await page.request.delete("/api/flashcards/999999999");
 
     expect(response.status()).toBe(404);
     const data = await response.json();
     expect(data.error).toBe("Flashcard not found");
   });
 
-  test("DELETE /api/flashcards/[id] - should return 400 for invalid ID", async ({ request }) => {
-    const response = await request.delete("/api/flashcards/not-a-number");
+  test("DELETE /api/flashcards/[id] - should return 400 for invalid ID", async ({ page }) => {
+    const response = await page.request.delete("/api/flashcards/not-a-number");
 
     expect(response.status()).toBe(400);
     const data = await response.json();
     expect(data.error).toBe("Invalid flashcard ID");
   });
 
-  test("Full CRUD flow - create, read, update, delete", async ({ request }) => {
+  test("Full CRUD flow - create, read, update, delete", async ({ page }) => {
     // 1. CREATE
-    const createResponse = await request.post("/api/flashcards", {
+    const createResponse = await page.request.post("/api/flashcards", {
       headers: {
         "Content-Type": "application/json",
       },
@@ -396,19 +409,19 @@ test.describe("Flashcard Management (CRUD Operations)", () => {
     const flashcardId = created.flashcards[0].id;
 
     // 2. READ (by ID)
-    const getByIdResponse = await request.get(`/api/flashcards/${flashcardId}`);
+    const getByIdResponse = await page.request.get(`/api/flashcards/${flashcardId}`);
     expect(getByIdResponse.ok()).toBeTruthy();
     const flashcard = await getByIdResponse.json();
     expect(flashcard.front).toBe("CRUD Test Question");
 
     // 3. READ (in list)
-    const getListResponse = await request.get("/api/flashcards?limit=100");
+    const getListResponse = await page.request.get("/api/flashcards?limit=100");
     const list = await getListResponse.json();
     const foundInList = list.data.find((f: { id: number }) => f.id === flashcardId);
     expect(foundInList).toBeDefined();
 
     // 4. UPDATE
-    const updateResponse = await request.put(`/api/flashcards/${flashcardId}`, {
+    const updateResponse = await page.request.put(`/api/flashcards/${flashcardId}`, {
       headers: {
         "Content-Type": "application/json",
       },
@@ -423,11 +436,11 @@ test.describe("Flashcard Management (CRUD Operations)", () => {
     expect(updated.back).toBe("CRUD Test Answer"); // Should remain unchanged
 
     // 5. DELETE
-    const deleteResponse = await request.delete(`/api/flashcards/${flashcardId}`);
+    const deleteResponse = await page.request.delete(`/api/flashcards/${flashcardId}`);
     expect(deleteResponse.ok()).toBeTruthy();
 
     // 6. VERIFY DELETED
-    const verifyResponse = await request.get(`/api/flashcards/${flashcardId}`);
+    const verifyResponse = await page.request.get(`/api/flashcards/${flashcardId}`);
     expect(verifyResponse.status()).toBe(404);
   });
 });
