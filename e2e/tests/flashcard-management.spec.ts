@@ -2,9 +2,6 @@ import { test, expect } from "@playwright/test";
 import { LoginPage } from "./pages/LoginPage";
 
 test.describe("Flashcard Management (CRUD Operations)", () => {
-  let authToken: string;
-  let userId: string;
-
   test.beforeEach(async ({ page, context }) => {
     // Clear cookies and storage before each test
     await context.clearCookies();
@@ -25,13 +22,6 @@ test.describe("Flashcard Management (CRUD Operations)", () => {
 
     // Wait for redirect
     await page.waitForURL("/generate", { timeout: 10000 });
-
-    // Get auth token from cookies
-    const cookies = await context.cookies();
-    const accessTokenCookie = cookies.find((c) => c.name === "sb-access-token");
-    if (accessTokenCookie) {
-      authToken = accessTokenCookie.value;
-    }
   });
 
   test("GET /api/flashcards - should return paginated list of flashcards", async ({ request }) => {
@@ -89,7 +79,7 @@ test.describe("Flashcard Management (CRUD Operations)", () => {
     const data = await response.json();
 
     // All returned flashcards should have source="manual"
-    data.data.forEach((flashcard: any) => {
+    data.data.forEach((flashcard: { source: string }) => {
       expect(flashcard.source).toBe("manual");
     });
   });
@@ -414,7 +404,7 @@ test.describe("Flashcard Management (CRUD Operations)", () => {
     // 3. READ (in list)
     const getListResponse = await request.get("/api/flashcards?limit=100");
     const list = await getListResponse.json();
-    const foundInList = list.data.find((f: any) => f.id === flashcardId);
+    const foundInList = list.data.find((f: { id: number }) => f.id === flashcardId);
     expect(foundInList).toBeDefined();
 
     // 4. UPDATE

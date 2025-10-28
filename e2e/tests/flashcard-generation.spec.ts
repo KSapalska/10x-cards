@@ -83,6 +83,7 @@ czy Next.js jako framework do tworzenia aplikacji serwerowych.
     // Verify flashcards were generated
     const flashcardCount = await generatePage.getFlashcardCount();
     expect(flashcardCount).toBeGreaterThan(0);
+    // eslint-disable-next-line no-console
     console.log(`Generated ${flashcardCount} flashcards`);
 
     // Verify bulk save section is visible

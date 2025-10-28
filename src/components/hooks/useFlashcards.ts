@@ -71,6 +71,7 @@ export function useFlashcards(params: FlashcardsQueryParams) {
 
   useEffect(() => {
     fetchFlashcards();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [params.page, params.limit, params.sort, params.order, params.source, params.generation_id]);
 
   return {
