@@ -20,7 +20,7 @@ export class LoginPage {
   }
 
   async assertOnPage() {
-    await expect(this.page.getByRole("heading", { name: /Zaloguj się/i })).toBeVisible();
+    await expect(this.loginForm).toBeVisible();
   }
 
   async login(email: string, password: string) {

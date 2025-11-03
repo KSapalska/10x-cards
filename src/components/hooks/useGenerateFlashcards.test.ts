@@ -106,7 +106,7 @@ describe("useGenerateFlashcards", () => {
       const { result } = renderHook(() => useGenerateFlashcards());
       const validText = "a".repeat(1000);
 
-      let resolvePromise: (value: unknown) => void;
+      let resolvePromise: ((value: unknown) => void) | null = null;
       const promise = new Promise((resolve) => {
         resolvePromise = resolve;
       });
@@ -122,15 +122,17 @@ describe("useGenerateFlashcards", () => {
       });
 
       // Resolve the promise
-      resolvePromise!({
-        ok: true,
-        json: async () =>
-          ({
-            generation_id: 1,
-            flashcards_proposals: [],
-            generated_count: 0,
-          }) satisfies GenerationCreateResponseDto,
-      });
+      if (resolvePromise) {
+        resolvePromise({
+          ok: true,
+          json: async () =>
+            ({
+              generation_id: 1,
+              flashcards_proposals: [],
+              generated_count: 0,
+            }) satisfies GenerationCreateResponseDto,
+        });
+      }
 
       await generatePromise;
 
