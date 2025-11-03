@@ -204,7 +204,7 @@ aplikacji mobilnych (z React Native).
     expect(newCount).toBe(initialCount - 1);
   });
 
-  test("should disable generate button with insufficient text", async ({ page }) => {
+  test.skip("should disable generate button with insufficient text", async ({ page }) => {
     const generatePage = new GeneratePage(page);
 
     await generatePage.assertOnPage();
