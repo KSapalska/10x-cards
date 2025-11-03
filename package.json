@@ -19,9 +19,9 @@
     "e2e:report": "playwright show-report e2e-report"
   },
   "dependencies": {
-    "@astrojs/node": "^9.4.3",
-    "@astrojs/react": "^4.3.1",
-    "@astrojs/sitemap": "^3.5.1",
+    "@astrojs/node": "^9.5.0",
+    "@astrojs/react": "^4.4.1",
+    "@astrojs/sitemap": "^3.6.0",
     "@radix-ui/react-avatar": "^1.1.10",
     "@radix-ui/react-label": "^2.1.7",
     "@radix-ui/react-slot": "^1.2.3",
@@ -29,7 +29,7 @@
     "@tailwindcss/vite": "^4.1.13",
     "@types/react": "^19.1.12",
     "@types/react-dom": "^19.1.9",
-    "astro": "^5.13.7",
+    "astro": "^5.15.3",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^0.487.0",
