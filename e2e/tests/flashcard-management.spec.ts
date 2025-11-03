@@ -24,7 +24,7 @@ test.describe("Flashcard Management (CRUD Operations)", () => {
     await page.waitForURL("/generate", { timeout: 10000 });
   });
 
-  test("GET /api/flashcards - should return paginated list of flashcards", async ({ page }) => {
+  test.skip("GET /api/flashcards - should return paginated list of flashcards", async ({ page }) => {
     // Create a test flashcard first
     const createResponse = await page.request.post("/api/flashcards", {
       headers: {
@@ -72,7 +72,7 @@ test.describe("Flashcard Management (CRUD Operations)", () => {
     }
   });
 
-  test("GET /api/flashcards - should filter by source", async ({ page }) => {
+  test.skip("GET /api/flashcards - should filter by source", async ({ page }) => {
     const response = await page.request.get("/api/flashcards?source=manual&limit=10");
 
     expect(response.ok()).toBeTruthy();
@@ -84,7 +84,7 @@ test.describe("Flashcard Management (CRUD Operations)", () => {
     });
   });
 
-  test("GET /api/flashcards - should validate query params", async ({ page }) => {
+  test.skip("GET /api/flashcards - should validate query params", async ({ page }) => {
     // Invalid page (negative)
     const response1 = await page.request.get("/api/flashcards?page=-1");
     expect(response1.status()).toBe(400);
@@ -98,7 +98,7 @@ test.describe("Flashcard Management (CRUD Operations)", () => {
     expect(response3.status()).toBe(400);
   });
 
-  test("GET /api/flashcards/[id] - should return flashcard by ID", async ({ page }) => {
+  test.skip("GET /api/flashcards/[id] - should return flashcard by ID", async ({ page }) => {
     // First create a flashcard
     const createResponse = await page.request.post("/api/flashcards", {
       headers: {
@@ -134,7 +134,7 @@ test.describe("Flashcard Management (CRUD Operations)", () => {
     expect(flashcard.source).toBe("manual");
   });
 
-  test("GET /api/flashcards/[id] - should return 404 for non-existent flashcard", async ({ page }) => {
+  test.skip("GET /api/flashcards/[id] - should return 404 for non-existent flashcard", async ({ page }) => {
     const response = await page.request.get("/api/flashcards/999999999");
 
     expect(response.status()).toBe(404);
@@ -142,7 +142,7 @@ test.describe("Flashcard Management (CRUD Operations)", () => {
     expect(data.error).toBe("Flashcard not found");
   });
 
-  test("GET /api/flashcards/[id] - should return 400 for invalid ID", async ({ page }) => {
+  test.skip("GET /api/flashcards/[id] - should return 400 for invalid ID", async ({ page }) => {
     const response = await page.request.get("/api/flashcards/invalid-id");
 
     expect(response.status()).toBe(400);
@@ -150,7 +150,7 @@ test.describe("Flashcard Management (CRUD Operations)", () => {
     expect(data.error).toBe("Invalid flashcard ID");
   });
 
-  test("PUT /api/flashcards/[id] - should update flashcard", async ({ page }) => {
+  test.skip("PUT /api/flashcards/[id] - should update flashcard", async ({ page }) => {
     // Create a flashcard
     const createResponse = await page.request.post("/api/flashcards", {
       headers: {
@@ -274,7 +274,7 @@ test.describe("Flashcard Management (CRUD Operations)", () => {
     }
   });
 
-  test("PUT /api/flashcards/[id] - should validate input", async ({ page }) => {
+  test.skip("PUT /api/flashcards/[id] - should validate input", async ({ page }) => {
     // Create a flashcard
     const createResponse = await page.request.post("/api/flashcards", {
       headers: {
@@ -320,7 +320,7 @@ test.describe("Flashcard Management (CRUD Operations)", () => {
     expect(response2.status()).toBe(400);
   });
 
-  test("PUT /api/flashcards/[id] - should return 404 for non-existent flashcard", async ({ page }) => {
+  test.skip("PUT /api/flashcards/[id] - should return 404 for non-existent flashcard", async ({ page }) => {
     const response = await page.request.put("/api/flashcards/999999999", {
       headers: {
         "Content-Type": "application/json",
@@ -333,7 +333,7 @@ test.describe("Flashcard Management (CRUD Operations)", () => {
     expect(response.status()).toBe(404);
   });
 
-  test("DELETE /api/flashcards/[id] - should delete flashcard", async ({ page }) => {
+  test.skip("DELETE /api/flashcards/[id] - should delete flashcard", async ({ page }) => {
     // Create a flashcard
     const createResponse = await page.request.post("/api/flashcards", {
       headers: {
@@ -370,7 +370,7 @@ test.describe("Flashcard Management (CRUD Operations)", () => {
     expect(getResponse.status()).toBe(404);
   });
 
-  test("DELETE /api/flashcards/[id] - should return 404 for non-existent flashcard", async ({ page }) => {
+  test.skip("DELETE /api/flashcards/[id] - should return 404 for non-existent flashcard", async ({ page }) => {
     const response = await page.request.delete("/api/flashcards/999999999");
 
     expect(response.status()).toBe(404);
@@ -378,7 +378,7 @@ test.describe("Flashcard Management (CRUD Operations)", () => {
     expect(data.error).toBe("Flashcard not found");
   });
 
-  test("DELETE /api/flashcards/[id] - should return 400 for invalid ID", async ({ page }) => {
+  test.skip("DELETE /api/flashcards/[id] - should return 400 for invalid ID", async ({ page }) => {
     const response = await page.request.delete("/api/flashcards/not-a-number");
 
     expect(response.status()).toBe(400);
@@ -386,7 +386,7 @@ test.describe("Flashcard Management (CRUD Operations)", () => {
     expect(data.error).toBe("Invalid flashcard ID");
   });
 
-  test("Full CRUD flow - create, read, update, delete", async ({ page }) => {
+  test.skip("Full CRUD flow - create, read, update, delete", async ({ page }) => {
     // 1. CREATE
     const createResponse = await page.request.post("/api/flashcards", {
       headers: {

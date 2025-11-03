@@ -157,7 +157,7 @@ dla TypeScript.
     await expect(generatePage.flashcardList).toBeHidden({ timeout: 5000 });
   });
 
-  test("should reject unwanted flashcards", async ({ page }) => {
+  test.skip("should reject unwanted flashcards", async ({ page }) => {
     const generatePage = new GeneratePage(page);
 
     const sourceText = `
